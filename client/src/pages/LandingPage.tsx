@@ -113,46 +113,48 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         {/* Navbar (absolute, transparent over hero) */}
         <nav className="absolute top-0 left-0 right-0 z-20 px-6 py-5">
           <div className="max-w-[88rem] mx-auto w-full flex items-center justify-between">
-            {/* Left: LogoIcon + word ClearClaim */}
+            {/* Left: LogoIcon + word ClearCalm */}
             <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-              <LogoIcon className="w-7 h-7 text-black" />
-              <span className="text-2xl font-medium tracking-tight text-black">ClearClaim</span>
+              <div className="w-8 h-8 rounded-xl bg-sky-50 text-[#0369A1] flex items-center justify-center border border-sky-100">
+                <LogoIcon className="w-5 h-5 text-[#0369A1]" />
+              </div>
+              <span className="text-2xl font-bold tracking-tight text-[#0F172A]">ClearCalm</span>
             </div>
 
             {/* Center (hidden below md): Verify · Marketplace · Pipeline · Trust · Help */}
-            <div className="hidden md:flex items-center gap-8 text-base text-gray-700 hover:text-black font-medium transition-colors duration-200">
+            <div className="hidden md:flex items-center gap-8 text-sm text-slate-700 hover:text-black font-semibold transition-colors duration-200">
               <button
                 type="button"
                 onClick={handleVerify}
-                className="text-gray-700 hover:text-black transition-colors duration-200 font-medium cursor-pointer"
+                className="text-slate-700 hover:text-[#0369A1] transition-colors duration-200 font-semibold cursor-pointer"
               >
                 Verify
               </button>
               <button
                 type="button"
                 onClick={handleMarketplace}
-                className="text-gray-700 hover:text-black transition-colors duration-200 font-medium cursor-pointer"
+                className="text-slate-700 hover:text-[#0369A1] transition-colors duration-200 font-semibold cursor-pointer"
               >
                 Marketplace
               </button>
               <a
                 href="#pipeline"
-                className="text-gray-700 hover:text-black transition-colors duration-200 font-medium"
+                className="text-slate-700 hover:text-[#0369A1] transition-colors duration-200 font-semibold"
               >
-                Pipeline
+                How It Works
               </a>
               <a
                 href="#info"
-                className="text-gray-700 hover:text-black transition-colors duration-200 font-medium"
+                className="text-slate-700 hover:text-[#0369A1] transition-colors duration-200 font-semibold"
               >
-                Trust
+                Trust &amp; Security
               </a>
               <button
                 type="button"
                 onClick={() => onNavigateLogin?.()}
-                className="text-gray-700 hover:text-black transition-colors duration-200 font-medium cursor-pointer"
+                className="text-slate-700 hover:text-[#0369A1] transition-colors duration-200 font-semibold cursor-pointer"
               >
-                Help
+                Sign In
               </button>
             </div>
 
@@ -161,7 +163,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               id="nav-get-started-btn"
               type="button"
               onClick={handleRegister}
-              className="bg-black text-white text-base font-medium px-7 py-2.5 rounded-full hover:bg-gray-800 transition-colors duration-200 cursor-pointer"
+              className="bg-[#0F2942] hover:bg-[#0369A1] text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-colors duration-200 cursor-pointer shadow-sm"
             >
               Get Started
             </button>
@@ -195,35 +197,35 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             />
 
             {/* Subtle soft gradient scrim to ensure extreme legibility */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#F5F5F5]/90 via-[#F5F5F5]/70 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#F8FAFC]/95 via-[#F8FAFC]/80 to-transparent pointer-events-none" />
 
             {/* Content overlay */}
-            <div className="relative z-10 flex flex-col items-start justify-start h-full p-12 pt-36">
+            <div className="relative z-10 flex flex-col items-start justify-start h-full p-8 sm:p-12 pt-32 sm:pt-36">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#0369A1] bg-sky-50 px-3 py-1 rounded-full border border-sky-200 mb-3">
+                INSURANCE CLARITY WITHOUT ANXIETY
+              </span>
               <h1
-                className="text-black text-5xl md:text-6xl font-medium leading-tight max-w-xl mb-4"
-                style={{ letterSpacing: '-0.04em' }}
+                className="text-[#0F172A] text-4xl sm:text-5xl md:text-6xl font-bold leading-tight max-w-xl mb-4"
+                style={{ letterSpacing: '-0.03em' }}
               >
-                Your Claims<br />Verified
+                Your Coverage<br />&amp; Claims Verified
               </h1>
 
               <p
-                className="text-black/70 text-base md:text-lg max-w-md mb-8 leading-relaxed"
-                style={{ fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif" }}
+                className="text-slate-700 text-base md:text-lg max-w-md mb-8 leading-relaxed font-normal"
               >
-                An AI verification engine that reads your insurance documents, flags inconsistencies instantly, and connects you to legitimate, registry-checked providers.
+                ClearCalm reads your dense insurance paperwork, flags arithmetic and covenant inconsistencies, and connects you to official, registry-checked carriers.
               </p>
 
-              {/* Pill button "Verify Now" with arrow circle */}
+              {/* Button "Verify Document Now" */}
               <button
                 id="hero-verify-now-btn"
                 type="button"
                 onClick={handleVerify}
-                className="inline-flex items-center gap-3 bg-black text-white text-base md:text-lg font-medium pl-8 pr-2 py-2 rounded-full hover:bg-gray-800 transition-colors duration-200 cursor-pointer"
+                className="btn-primary !px-7 !py-3.5 !text-base"
               >
-                <span>Verify Now</span>
-                <span className="bg-white rounded-full p-2 flex items-center justify-center">
-                  <ArrowRight className="w-5 h-5 text-black" />
-                </span>
+                <span>Verify a Document Now</span>
+                <ArrowRight className="w-5 h-5" />
               </button>
 
               {/* Partner Marquee (inside hero, below button) */}

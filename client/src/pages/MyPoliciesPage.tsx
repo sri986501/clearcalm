@@ -1,14 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Shield, CheckCircle2, AlertTriangle, Download, ArrowRight, 
-  Clock, Calendar, FileText, Bookmark, ExternalLink, RefreshCw, Sparkles, Lock, Upload
+  Clock, Calendar, FileText, Bookmark, ExternalLink, RefreshCw, Lock, Upload, CreditCard, Plus
 } from 'lucide-react';
 import { Header, AppViewTab } from '../components/common/Header';
-import { usePolicyStore } from '../store/usePolicyStore';
+import { usePolicyStore, PolicyItem } from '../store/usePolicyStore';
 import { useProviderStore } from '../store/useProviderStore';
+import { useClaimStore } from '../store/useClaimStore';
 import { ProviderCard } from '../components/discovery/ProviderCard';
 import { ExternalRedirectModal } from '../components/discovery/ExternalRedirectModal';
 import { useTranslation } from 'react-i18next';
+import { SectionHeader } from '../components/ui/SectionHeader';
+import { PolicySummaryCard } from '../components/ui/PolicySummaryCard';
+import { EmptyState } from '../components/ui/EmptyState';
+import { SupportCard } from '../components/ui/SupportCard';
+import { StatusIndicator } from '../components/ui/StatusIndicator';
 
 interface MyPoliciesPageProps {
   onSelectTab?: (tab: AppViewTab) => void;
@@ -16,154 +22,256 @@ interface MyPoliciesPageProps {
 
 export const MyPoliciesPage: React.FC<MyPoliciesPageProps> = ({ onSelectTab }) => {
   const { t } = useTranslation();
-  const { policies, fetchPolicies, isLoading } = usePolicyStore();
+  const { policies, fetchPolicies, transactions, fetchTransactions, isLoading } = usePolicyStore();
   const { savedProviders, fetchSavedProviders } = useProviderStore();
+  const { openClaimModal } = useClaimStore();
+
+  const [activeCategoryFilter, setActiveCategoryFilter] = useState<string>('all');
+  const [activeViewMode, setActiveViewMode] = useState<'policies' | 'payments' | 'saved'>('policies');
 
   useEffect(() => {
     fetchPolicies();
+    fetchTransactions();
     fetchSavedProviders();
-  }, [fetchPolicies, fetchSavedProviders]);
+  }, [fetchPolicies, fetchTransactions, fetchSavedProviders]);
+
+  const filteredPolicies = policies.filter(p => {
+    if (activeCategoryFilter === 'all') return true;
+    return (p.category || '').toLowerCase() === activeCategoryFilter.toLowerCase();
+  });
+
+  const totalCoverage = policies.reduce((acc, p) => acc + (p.coverageAmount || 0), 0);
+  const activeCount = policies.filter(p => p.status === 'ACTIVE').length;
+
+  const formatCurrency = (amt: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    }).format(amt);
+  };
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] text-black flex flex-col font-sans transition-colors relative selection:bg-black selection:text-white">
-      {/* Subtle professional background image watermark */}
-      <div 
-        className="fixed inset-0 pointer-events-none z-0 opacity-[0.06] bg-cover bg-center"
-        style={{ backgroundImage: `url('/images/portal_bg.jpg')` }}
-      />
-
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] flex flex-col font-sans transition-colors selection:bg-[#0369A1] selection:text-white">
       <Header activeTab="policies" onSelectTab={onSelectTab} />
 
-      <main className="max-w-[88rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8 z-10">
-        {/* Header Title Banner */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 p-8 rounded-3xl bg-white border border-black/10 shadow-sm">
-          <div className="space-y-1.5">
-            <span className="inline-block text-xs font-medium uppercase tracking-wider text-black/60 bg-black/5 px-3 py-1 rounded-full border border-black/5">
-              {t('policies.vaultBadge', 'POLICY & PROVIDER PORTAL')}
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-black">
-              {t('policies.title', 'Connected Policies & Saved Providers')}
-            </h1>
-            <p className="text-xs sm:text-sm text-black/60 max-w-xl leading-relaxed">
-              {t('policies.subtitle', 'Access your verified document copies, saved official insurer links, and connection status.')}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => onSelectTab?.('verify')}
-              className="bg-black hover:bg-gray-800 text-white px-6 py-2.5 rounded-full text-xs font-medium tracking-tight flex items-center gap-2 cursor-pointer transition-colors shadow-sm"
-            >
-              <Upload className="w-4 h-4" />
-              <span>{t('dashboard.verifyNewDoc', 'Verify Document')}</span>
-            </button>
-            <button
-              onClick={() => onSelectTab?.('discovery')}
-              className="px-6 py-2.5 rounded-full border border-black/15 bg-white text-black hover:bg-black/5 text-xs font-medium transition-colors flex items-center gap-2 cursor-pointer shadow-sm"
-            >
-              <Shield className="w-4 h-4" />
-              <span>{t('discovery.heroTitle', 'Explore Insurance')}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Connected Policies State */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-medium text-black uppercase tracking-wider flex items-center gap-2">
-              <Lock className="w-4 h-4 text-black/60" />
-              <span>{t('dashboard.tabConnectedPolicies', 'Connected Policies')}</span>
-            </h2>
-          </div>
-
-          {policies.length === 0 ? (
-            <div className="p-10 sm:p-12 text-center bg-white border border-black/10 rounded-3xl space-y-4 shadow-sm">
-              <div className="w-14 h-14 rounded-full bg-black/5 flex items-center justify-center mx-auto text-black">
-                <Lock className="w-6 h-6" />
-              </div>
-              <div className="space-y-1.5 max-w-md mx-auto">
-                <h3 className="text-base font-medium text-black">
-                  {t('dashboard.noPoliciesConnectedTitle', 'No Policies Connected')}
-                </h3>
-                <p className="text-xs text-black/60 leading-relaxed">
-                  {t(
-                    'dashboard.noPoliciesConnectedDesc',
-                    'We do not currently have access to your insurer account or policy records. To analyze coverage or check authentic policy terms, upload your document copy.'
-                  )}
-                </p>
-              </div>
-              <div className="flex items-center justify-center gap-3 pt-2">
+      <main className="max-w-[88rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
+        
+        {/* Page Context & Header */}
+        <div className="p-6 sm:p-8 bg-white border border-slate-200/90 rounded-2xl shadow-sm space-y-6">
+          <SectionHeader
+            contextBadge="POLICY & COVERAGE PORTAL"
+            title="Connected Policies & Coverage"
+            subtitle="Understand your active insurance contracts, coverage limits, renewal dates, and payment history in plain language."
+            action={
+              <div className="flex items-center gap-2.5">
                 <button
                   onClick={() => onSelectTab?.('verify')}
-                  className="bg-black hover:bg-gray-800 text-white px-6 py-2.5 rounded-full text-xs font-medium cursor-pointer shadow-sm"
+                  className="btn-primary"
                 >
-                  {t('dashboard.verifyADocument', 'Verify a Document')}
+                  <Upload className="w-4 h-4" />
+                  <span>Verify New Policy</span>
                 </button>
                 <button
                   onClick={() => onSelectTab?.('discovery')}
-                  className="px-6 py-2.5 rounded-full border border-black/15 bg-white text-black hover:bg-black/5 text-xs font-medium cursor-pointer shadow-sm"
+                  className="btn-secondary"
                 >
-                  {t('dashboard.exploreInsurance', 'Explore Insurance')}
+                  <Shield className="w-4 h-4 text-[#0369A1]" />
+                  <span>Explore Insurance</span>
                 </button>
               </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {policies.map(p => (
-                <div key={p.id} className="p-6 bg-white border border-black/10 rounded-2xl space-y-3 shadow-sm">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-medium text-black text-base">{p.planName}</h4>
-                      <p className="text-xs text-black/60 mt-0.5">{p.providerName}</p>
-                    </div>
-                    <span className="px-3 py-1 rounded-full text-xs font-mono font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      {p.status}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs font-mono text-black/70 bg-black/[0.02] border border-black/5 p-3 rounded-xl">
-                    <div>
-                      <span className="text-black/40 text-[10px] block">Policy Number</span>
-                      <span className="font-medium text-black">{p.policyNumber}</span>
-                    </div>
-                    <div>
-                      <span className="text-black/40 text-[10px] block">Valid Until</span>
-                      <span className="font-medium text-black">{new Date(p.expiryDate).toLocaleDateString()}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
+            }
+          />
 
-        {/* Saved Providers Section */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-medium text-black uppercase tracking-wider flex items-center gap-2">
-              <Bookmark className="w-4 h-4 text-black/60" />
-              <span>{t('dashboard.tabSavedProviders', 'Saved Official Providers')}</span> ({savedProviders.length})
-            </h2>
+          {/* Quick Summary Pill Strip */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-100">
+            <div className="p-4 bg-slate-50/80 rounded-xl border border-slate-100 space-y-1">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">In-Force Coverage</span>
+              <div className="text-xl sm:text-2xl font-bold text-[#0F172A]">
+                {totalCoverage > 0 ? formatCurrency(totalCoverage) : '—'}
+              </div>
+              <p className="text-xs text-slate-500">Comprehensive protection ceiling</p>
+            </div>
+
+            <div className="p-4 bg-slate-50/80 rounded-xl border border-slate-100 space-y-1">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Active Contracts</span>
+              <div className="text-xl sm:text-2xl font-bold text-[#0F172A]">
+                {activeCount}
+              </div>
+              <p className="text-xs text-slate-500">Official registered policies on record</p>
+            </div>
+
+            <div className="p-4 bg-slate-50/80 rounded-xl border border-slate-100 space-y-1">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Payment Transactions</span>
+              <div className="text-xl sm:text-2xl font-bold text-[#0F172A]">
+                {transactions.length}
+              </div>
+              <p className="text-xs text-slate-500">Verified payment receipts on file</p>
+            </div>
+          </div>
+        </div>
+
+        {/* View Tabs */}
+        <div className="flex items-center justify-between border-b border-slate-200 pb-3 flex-wrap gap-3">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <button
+              onClick={() => setActiveViewMode('policies')}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                activeViewMode === 'policies'
+                  ? 'bg-[#0F2942] text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900 bg-white border border-slate-200/80 hover:bg-slate-50'
+              }`}
+            >
+              My Policies ({policies.length})
+            </button>
+
+            <button
+              onClick={() => setActiveViewMode('payments')}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                activeViewMode === 'payments'
+                  ? 'bg-[#0F2942] text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900 bg-white border border-slate-200/80 hover:bg-slate-50'
+              }`}
+            >
+              Payment History ({transactions.length})
+            </button>
+
+            <button
+              onClick={() => setActiveViewMode('saved')}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                activeViewMode === 'saved'
+                  ? 'bg-[#0F2942] text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900 bg-white border border-slate-200/80 hover:bg-slate-50'
+              }`}
+            >
+              Saved Providers ({savedProviders.length})
+            </button>
           </div>
 
-          {savedProviders.length === 0 ? (
-            <div className="p-10 text-center bg-white border border-black/10 rounded-3xl text-xs text-black/60 space-y-3 shadow-sm">
-              <Bookmark className="w-8 h-8 text-black/40 mx-auto" />
-              <p>{t('dashboard.noSavedProvidersDesc', 'You have not saved any official insurance providers yet.')}</p>
-              <button
-                onClick={() => onSelectTab?.('discovery')}
-                className="bg-black hover:bg-gray-800 text-white px-6 py-2.5 rounded-full text-xs font-medium mx-auto inline-block cursor-pointer shadow-sm"
-              >
-                {t('dashboard.exploreInsurance', 'Discover Legitimate Providers')}
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {savedProviders.map(provider => (
-                <ProviderCard key={provider.id} provider={provider} />
+          {activeViewMode === 'policies' && policies.length > 0 && (
+            <div className="flex items-center gap-1 overflow-x-auto">
+              {['all', 'health', 'vehicle', 'life', 'travel', 'property'].map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategoryFilter(cat)}
+                  className={`px-3 py-1 rounded-lg text-xs capitalize transition-colors cursor-pointer ${
+                    activeCategoryFilter === cat
+                      ? 'bg-sky-100 text-[#0369A1] font-semibold'
+                      : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  {cat}
+                </button>
               ))}
             </div>
           )}
-        </section>
+        </div>
+
+        {/* 1. POLICIES VIEW */}
+        {activeViewMode === 'policies' && (
+          <section className="space-y-4">
+            {filteredPolicies.length === 0 ? (
+              <EmptyState
+                icon={Lock}
+                title="No Connected Policies Found"
+                description={
+                  policies.length === 0
+                    ? 'ClearCalm does not have direct access to your insurer account yet. Upload your policy PDF or scan to automatically verify covenants and add it here.'
+                    : 'No policies found under the selected category filter.'
+                }
+                actionLabel="Verify Policy Document"
+                onAction={() => onSelectTab?.('verify')}
+                secondaryActionLabel={policies.length === 0 ? 'Explore Insurance' : 'Show All Policies'}
+                onSecondaryAction={() => {
+                  if (policies.length === 0) onSelectTab?.('discovery');
+                  else setActiveCategoryFilter('all');
+                }}
+              />
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {filteredPolicies.map(policy => (
+                  <PolicySummaryCard
+                    key={policy.id}
+                    policy={policy}
+                    onFileClaim={() => openClaimModal()}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* 2. PAYMENT TRANSACTIONS VIEW */}
+        {activeViewMode === 'payments' && (
+          <section className="space-y-4">
+            {transactions.length === 0 ? (
+              <EmptyState
+                icon={CreditCard}
+                title="No Payment Records Found"
+                description="Payment transactions, premium receipts, and renewal records will be archived here once processed."
+                actionLabel="Explore Plans"
+                onAction={() => onSelectTab?.('discovery')}
+              />
+            ) : (
+              <div className="bg-white border border-slate-200/90 rounded-2xl shadow-sm overflow-hidden divide-y divide-slate-100">
+                <div className="p-4 bg-slate-50 font-semibold text-xs text-slate-500 uppercase tracking-wider grid grid-cols-12 gap-2">
+                  <div className="col-span-5 sm:col-span-4">Plan &amp; Gateway</div>
+                  <div className="col-span-4 sm:col-span-3">Order / Payment ID</div>
+                  <div className="col-span-3 sm:col-span-2 text-right">Amount</div>
+                  <div className="hidden sm:block sm:col-span-3 text-right">Date &amp; Status</div>
+                </div>
+
+                {transactions.map(txn => (
+                  <div key={txn.id} className="p-4 grid grid-cols-12 gap-2 items-center text-xs text-slate-700 hover:bg-slate-50/50 transition-colors">
+                    <div className="col-span-5 sm:col-span-4 space-y-0.5">
+                      <span className="font-semibold text-slate-900 block truncate">{txn.planName || 'Insurance Policy'}</span>
+                      <span className="text-[11px] text-slate-400 capitalize">{txn.gateway || 'Razorpay / Gateway'} • {txn.paymentMethod || 'Online'}</span>
+                    </div>
+
+                    <div className="col-span-4 sm:col-span-3 font-mono text-slate-500 truncate" title={txn.paymentId || txn.orderId}>
+                      {txn.paymentId || txn.orderId}
+                    </div>
+
+                    <div className="col-span-3 sm:col-span-2 text-right font-semibold text-slate-900">
+                      {formatCurrency(txn.amount)}
+                    </div>
+
+                    <div className="hidden sm:flex sm:col-span-3 items-center justify-end gap-3 text-right">
+                      <span className="text-slate-500">
+                        {new Date(txn.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                      <StatusIndicator status={txn.status} size="sm" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* 3. SAVED PROVIDERS VIEW */}
+        {activeViewMode === 'saved' && (
+          <section className="space-y-4">
+            {savedProviders.length === 0 ? (
+              <EmptyState
+                icon={Bookmark}
+                title="No Saved Providers"
+                description="Explore legitimate, IRDAI-registered insurance carriers and bookmark them for quick access."
+                actionLabel="Explore Providers"
+                onAction={() => onSelectTab?.('discovery')}
+              />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {savedProviders.map(provider => (
+                  <ProviderCard key={provider.id} provider={provider} />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Support Section */}
+        <SupportCard onOpenChat={() => onSelectTab?.('discovery')} />
       </main>
 
       <ExternalRedirectModal />

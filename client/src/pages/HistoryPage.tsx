@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Search, FileText, CheckCircle2, AlertTriangle, Printer, ArrowUpDown, Eye, Trash2, BookOpen, Plus, ArrowRight, ShieldCheck, Filter } from 'lucide-react';
+import { 
+  Search, FileText, CheckCircle2, AlertTriangle, Printer, 
+  ArrowUpDown, Eye, Trash2, Plus, ArrowRight, ShieldCheck, Filter 
+} from 'lucide-react';
 import { Header } from '../components/common/Header';
 import { VerificationReportModal } from '../components/common/VerificationReportModal';
 import { DocumentViewerModal } from '../components/common/DocumentViewerModal';
 import { useVerifyStore } from '../store/useVerifyStore';
+import { SectionHeader } from '../components/ui/SectionHeader';
+import { StatusIndicator } from '../components/ui/StatusIndicator';
+import { EmptyState } from '../components/ui/EmptyState';
+import { SupportCard } from '../components/ui/SupportCard';
 
 interface HistoryPageProps {
   onSelectTab?: (tab: any) => void;
@@ -16,6 +23,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({ onSelectTab }) => {
     selectedReportDoc, openDocumentModal, closeDocumentModal, selectedDocumentForView,
     isDocumentModalOpen, searchQuery, setSearchQuery, statusFilter, setStatusFilter
   } = useVerifyStore();
+
   const [sortBy, setSortBy] = useState<'date' | 'score' | 'time'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [isClearing, setIsClearing] = useState(false);
@@ -48,293 +56,233 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({ onSelectTab }) => {
   const reviewCount = verifications.filter(item => item.status !== 'Verified / Likely Original' && item.status !== 'CONSISTENT').length;
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] text-black relative flex flex-col font-sans">
-      {/* Professional Watermark Background */}
-      <div 
-        className="fixed inset-0 pointer-events-none bg-[url('/images/portal_bg.jpg')] bg-cover bg-center opacity-[0.06] z-0" 
-        aria-hidden="true" 
-      />
-
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] relative flex flex-col font-sans transition-colors selection:bg-[#0369A1] selection:text-white">
       <Header activeTab="history" onSelectTab={onSelectTab} />
       
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-6">
+      <main className="max-w-[88rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-6">
         
         {/* Header Bar */}
-        <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl bg-white border border-black/10 shadow-sm">
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs font-mono text-black/60 font-semibold tracking-wider">
-                CRYPTOGRAPHIC ARCHIVE
-              </span>
+        <div className="p-6 sm:p-8 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-6">
+          <SectionHeader
+            contextBadge="AUDIT ARCHIVE &amp; EVIDENCE VAULT"
+            title="Policy Audit Archive"
+            subtitle="Explore historical records of verified insurance contracts, optical evidence, and discrepancy logs."
+            action={
+              <button 
+                onClick={() => onSelectTab?.('verify')} 
+                className="btn-primary"
+              >
+                <Plus size={15} />
+                <span>Verify New Policy</span>
+              </button>
+            }
+          />
+
+          {/* Quick Metrics */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-100">
+            <div className="p-4 bg-slate-50/80 rounded-xl border border-slate-100 space-y-1">
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Evaluated</span>
+              <div className="text-2xl font-bold text-[#0F172A]">{verifications.length}</div>
+              <p className="text-xs text-slate-500">Historical contracts on record</p>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-black">
-              Policy Audit Vault
-            </h1>
-            <p className="text-sm text-black/60 max-w-2xl">
-              Complete historical record of all policy contracts, extracted citations, discrepancy logs, and audit reports.
-            </p>
+
+            <div className="p-4 bg-slate-50/80 rounded-xl border border-slate-100 space-y-1">
+              <span className="text-xs font-semibold text-emerald-800 uppercase tracking-wider">Consistent Records</span>
+              <div className="text-2xl font-bold text-emerald-700">{verifications.length - reviewCount}</div>
+              <p className="text-xs text-slate-500">Zero major discrepancies</p>
+            </div>
+
+            <div className="p-4 bg-slate-50/80 rounded-xl border border-slate-100 space-y-1">
+              <span className="text-xs font-semibold text-amber-900 uppercase tracking-wider">Attention Requested</span>
+              <div className="text-2xl font-bold text-amber-700">{reviewCount}</div>
+              <p className="text-xs text-slate-500">Requires underwriter clarification</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Filter and Search Bar */}
+        <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="relative flex-1">
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input 
+              id="archive-search" 
+              type="search" 
+              placeholder="Search by filename, policy number, policyholder, or carrier…" 
+              value={searchQuery} 
+              onChange={e => setSearchQuery(e.target.value)} 
+              className="w-full pl-10 pr-4 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 text-[#0F172A] placeholder:text-slate-400 focus:outline-none focus:border-[#0369A1] focus:ring-2 focus:ring-sky-100" 
+            />
           </div>
 
-          <button 
-            onClick={() => onSelectTab?.('verify')} 
-            className="bg-black text-white hover:bg-gray-800 transition-colors py-2.5 px-5 rounded-full text-xs font-medium tracking-wide flex items-center gap-2 self-start lg:self-center shadow-sm cursor-pointer"
-          >
-            <Plus size={15} />
-            <span>Verify New Policy</span>
-          </button>
-        </header>
+          <div className="flex items-center gap-2 overflow-x-auto">
+            {(['ALL', 'CONSISTENT', 'NEEDS_REVIEW'] as const).map(status => (
+              <button
+                key={status}
+                onClick={() => setStatusFilter(status)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
+                  statusFilter === status 
+                    ? 'bg-[#0F2942] text-white shadow-sm' 
+                    : 'bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200'
+                }`}
+              >
+                {status === 'ALL' ? 'All Records' : status === 'CONSISTENT' ? 'Consistent' : 'Discrepancies'}
+              </button>
+            ))}
 
-        {/* Overview Stats Strip */}
-        <section aria-label="Archive overview" className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[
-            { label: 'TOTAL ARCHIVED CONTRACTS', value: verifications.length, color: 'text-black' },
-            { label: 'CONSISTENT VERDICTS', value: verifications.length - reviewCount, color: 'text-emerald-600' },
-            { label: 'DISCREPANCY FLAGGED', value: reviewCount, color: 'text-amber-600' }
-          ].map(stat => (
-            <div key={stat.label} className="p-5 sm:p-6 rounded-2xl bg-white border border-black/10 shadow-sm">
-              <p className="text-[11px] font-mono text-black/50 font-medium tracking-wide">{stat.label}</p>
-              <p className={`font-mono text-3xl font-bold mt-2 ${stat.color}`}>
-                {isLoading && !verifications.length ? '—' : stat.value}
-              </p>
-            </div>
-          ))}
-        </section>
+            <div className="h-5 w-[1px] bg-slate-200 mx-1 hidden sm:block" />
 
-        {/* Search, Filter & Record Table */}
-        <section aria-label="Verification records" className="space-y-4">
-          
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-black/10 shadow-sm">
-            
-            {/* Search Input */}
-            <div className="relative flex-1">
-              <Search size={15} className="absolute left-3.5 top-3 text-black/40" />
-              <input 
-                id="archive-search" 
-                type="search" 
-                placeholder="Search by filename, policy number, holder, or underwriter..." 
-                value={searchQuery} 
-                onChange={e => setSearchQuery(e.target.value)} 
-                className="w-full pl-10 pr-4 py-2.5 text-xs font-mono rounded-xl bg-black/[0.02] border border-black/10 text-black placeholder:text-black/40 focus:outline-none focus:ring-1 focus:ring-black" 
+            <select 
+              id="archive-sort" 
+              value={sortBy} 
+              onChange={e => setSortBy(e.target.value as typeof sortBy)} 
+              className="px-3 py-1.5 text-xs font-semibold rounded-xl bg-white border border-slate-200 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-100 cursor-pointer"
+            >
+              <option value="date">Sort: Date</option>
+              <option value="score">Sort: Anomaly Index</option>
+              <option value="time">Sort: Latency</option>
+            </select>
+
+            <button 
+              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} 
+              className="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 cursor-pointer"
+              title={`Sort: ${sortOrder === 'asc' ? 'Ascending' : 'Descending'}`}
+            >
+              <ArrowUpDown size={14} />
+            </button>
+          </div>
+        </div>
+
+        {/* Records Container */}
+        <div className="rounded-2xl bg-white border border-slate-200/90 overflow-hidden shadow-sm">
+          {sorted.length === 0 ? (
+            <div className="p-12">
+              <EmptyState
+                icon={FileText}
+                title={isLoading ? 'Loading records…' : verifications.length ? 'No matching records found' : 'No records stored'}
+                description={
+                  verifications.length 
+                    ? 'Try adjusting your search terms or filter settings.' 
+                    : 'Upload your first insurance policy to generate a cryptographically audited record.'
+                }
+                actionLabel={verifications.length ? 'Reset Filters' : 'Verify Policy Document'}
+                onAction={verifications.length ? resetFilters : () => onSelectTab?.('verify')}
               />
             </div>
-
-            {/* Filter and Sort Controls */}
-            <div className="flex items-center gap-2 overflow-x-auto">
-              {(['ALL', 'CONSISTENT', 'NEEDS_REVIEW'] as const).map(status => (
-                <button
-                  key={status}
-                  onClick={() => setStatusFilter(status)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                    statusFilter === status 
-                      ? 'bg-black text-white' 
-                      : 'bg-black/5 text-black/70 hover:bg-black/10'
-                  }`}
-                >
-                  {status === 'ALL' ? 'ALL' : status === 'CONSISTENT' ? 'CONSISTENT' : 'FLAGGED'}
-                </button>
-              ))}
-
-              <div className="h-5 w-[1px] bg-black/10 mx-1 hidden sm:block" />
-
-              <select 
-                id="archive-sort" 
-                value={sortBy} 
-                onChange={e => setSortBy(e.target.value as typeof sortBy)} 
-                className="px-3 py-1.5 text-xs font-medium rounded-full bg-white border border-black/10 text-black/80 focus:outline-none focus:ring-1 focus:ring-black"
-              >
-                <option value="date">Date</option>
-                <option value="score">Anomaly Index</option>
-                <option value="time">Latency</option>
-              </select>
-
-              <button 
-                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} 
-                className="p-2 rounded-full border border-black/10 bg-white hover:bg-black/5 text-black/70 cursor-pointer"
-                title={`Sort: ${sortOrder === 'asc' ? 'Ascending' : 'Descending'}`}
-              >
-                <ArrowUpDown size={13} />
-              </button>
-            </div>
-
-          </div>
-
-          {/* Table Container */}
-          <div className="rounded-2xl bg-white border border-black/10 overflow-hidden shadow-sm">
-            {sorted.length === 0 ? (
-              <div className="p-14 text-center space-y-3">
-                <FileText size={36} className="mx-auto text-black/30" />
-                <h3 className="text-base font-semibold text-black">
-                  {isLoading ? 'Retrieving archive...' : verifications.length ? 'No matching policy records' : 'No records stored'}
-                </h3>
-                <p className="text-xs text-black/60 max-w-sm mx-auto">
-                  {verifications.length ? 'Clear the search filter to display all historical records.' : 'Verify a policy document to generate an encrypted audit trail.'}
-                </p>
-                {verifications.length ? (
-                  <button onClick={resetFilters} className="bg-black/5 hover:bg-black/10 text-black px-4 py-2 rounded-full text-xs font-medium tracking-wide">
-                    Reset Filter
-                  </button>
-                ) : (
-                  <button onClick={() => onSelectTab?.('verify')} className="bg-black text-white hover:bg-gray-800 px-5 py-2.5 rounded-full text-xs font-medium tracking-wide">
-                    Launch Verification
-                  </button>
-                )}
+          ) : (
+            <div className="divide-y divide-slate-100">
+              {/* Header on tablet/desktop */}
+              <div className="hidden md:grid grid-cols-12 gap-3 p-4 bg-slate-50 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                <div className="col-span-4">Document &amp; File</div>
+                <div className="col-span-3">Insurer &amp; Policy #</div>
+                <div className="col-span-3">Status &amp; Verification</div>
+                <div className="col-span-2 text-right">Actions</div>
               </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-black/[0.02] font-mono text-[11px] text-black/50 border-b border-black/10">
-                    <tr>
-                      <th className="px-5 py-3.5 font-semibold">DOCUMENT &amp; REF</th>
-                      <th className="px-4 py-3.5 font-semibold hidden md:table-cell">POLICYHOLDER / INSURER</th>
-                      <th className="px-4 py-3.5 font-semibold">STATUS</th>
-                      <th className="px-4 py-3.5 font-semibold hidden lg:table-cell">ANOMALY INDEX</th>
-                      <th className="px-4 py-3.5 font-semibold hidden xl:table-cell">CHECKS</th>
-                      <th className="px-4 py-3.5 font-semibold">DATE &amp; LATENCY</th>
-                      <th className="px-5 py-3.5 font-semibold text-right">ACTION</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-black/5">
-                    {sorted.map(item => {
-                      const isConsistent = item.status === 'CONSISTENT';
-                      const fields = item.extractedFields;
-                      return (
-                        <tr key={item.verificationId || item._id} className="hover:bg-black/[0.015] transition-colors">
-                          
-                          {/* File / Doc */}
-                          <td className="px-5 py-4">
-                            <button 
-                              onClick={() => openDocumentModal(item)} 
-                              className="text-left font-semibold text-black hover:text-emerald-700 truncate max-w-[200px] block cursor-pointer"
-                            >
-                              {item.filename}
-                            </button>
-                            <p className="text-[11px] font-mono text-black/40 mt-0.5">
-                              {fields?.policy_number?.value || `Ref: ${(item.verificationId || item._id || '').slice(0, 14)}`}
-                            </p>
-                          </td>
 
-                          {/* Policyholder */}
-                          <td className="px-4 py-4 hidden md:table-cell">
-                            <p className="font-medium text-black">{fields?.policyholder?.value || 'Unspecified Entity'}</p>
-                            <p className="text-[11px] font-mono text-black/50 mt-0.5">{fields?.insurer?.value || 'Insurer not specified'}</p>
-                          </td>
+              {sorted.map(doc => {
+                const isConsistent = doc.status === 'Verified / Likely Original' || doc.status === 'CONSISTENT';
+                return (
+                  <div key={doc.verificationId} className="p-4 sm:p-5 flex flex-col md:grid md:grid-cols-12 gap-3 items-start md:items-center hover:bg-slate-50/60 transition-colors">
+                    <div className="col-span-4 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-[#0369A1] shrink-0" />
+                        <span className="font-semibold text-sm text-[#0F172A] truncate max-w-xs block" title={doc.filename}>
+                          {doc.filename}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 pl-6">
+                        {new Date(doc.verifiedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        {doc.fileSize ? ` • ${(doc.fileSize / 1024).toFixed(0)} KB` : ''}
+                      </p>
+                    </div>
 
-                          {/* Status */}
-                          <td className="px-4 py-4">
-                            {isConsistent ? (
-                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                <CheckCircle2 size={12} />
-                                <span>Consistent</span>
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                                <AlertTriangle size={12} />
-                                <span>Flagged</span>
-                              </span>
-                            )}
-                          </td>
+                    <div className="col-span-3 space-y-0.5 text-xs">
+                      <span className="font-medium text-slate-900 block truncate">
+                        {doc.extractedFields?.insurer?.value || 'Accredited Insurer'}
+                      </span>
+                      <span className="font-mono text-slate-500 block truncate">
+                        {doc.extractedFields?.policy_number?.value || 'Policy Not Extracted'}
+                      </span>
+                    </div>
 
-                          {/* Anomaly Index */}
-                          <td className="px-4 py-4 hidden lg:table-cell font-mono">
-                            <span className={`px-2 py-0.5 rounded text-[11px] font-semibold ${
-                              item.anomalyScore > 0.4 ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-black/5 text-black/70'
-                            }`}>
-                              {item.anomalyScore.toFixed(2)}
-                            </span>
-                            <span className="block text-[10px] text-black/40 mt-0.5">{item.detectedIssues?.length || 0} conflicts</span>
-                          </td>
+                    <div className="col-span-3 space-y-1">
+                      <StatusIndicator status={doc.status} size="sm" />
+                      <span className="text-[11px] text-slate-400 block">
+                        Confidence: {Math.round(doc.confidenceScore * 100)}%
+                      </span>
+                    </div>
 
-                          {/* Checks */}
-                          <td className="px-4 py-4 hidden xl:table-cell font-mono text-black/70">
-                            <span className="text-emerald-700 font-bold">{item.passedChecksCount}</span> / {item.totalChecksCount}
-                          </td>
+                    <div className="col-span-2 flex items-center justify-end gap-1.5 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+                      <button
+                        onClick={() => openReportModal(doc)}
+                        className="btn-secondary !text-xs !py-1.5 !px-3"
+                        title="View Full Audit Report"
+                      >
+                        <Eye size={13} />
+                        <span>Audit</span>
+                      </button>
 
-                          {/* Date & Latency */}
-                          <td className="px-4 py-4 font-mono text-black/60 text-[11px]">
-                            <p className="text-black font-medium">{new Date(item.verifiedAt).toLocaleDateString()}</p>
-                            <p className="text-black/40 mt-0.5">{item.processingTimeMs}ms</p>
-                          </td>
+                      {doc.fileUrl && (
+                        <button
+                          onClick={() => openDocumentModal(doc)}
+                          className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
+                          title="View Original Document"
+                        >
+                          <FileText size={14} />
+                        </button>
+                      )}
 
-                          {/* Action Hub */}
-                          <td className="px-5 py-4 text-right">
-                            <div className="flex items-center justify-end gap-1">
-                              <button 
-                                onClick={() => openDocumentModal(item)} 
-                                title="Inspect Modal" 
-                                className="p-2 rounded-lg text-black/50 hover:text-black hover:bg-black/5 transition-colors cursor-pointer"
-                              >
-                                <BookOpen size={15} />
-                              </button>
-                              <button 
-                                onClick={() => { selectVerification(item); onSelectTab?.('verify'); }} 
-                                title="Inspect in Console" 
-                                className="p-2 rounded-lg text-black/50 hover:text-black hover:bg-black/5 transition-colors cursor-pointer"
-                              >
-                                <Eye size={15} />
-                              </button>
-                              <button 
-                                onClick={() => openReportModal(item)} 
-                                title="Audit Certificate" 
-                                className="p-2 rounded-lg text-black/50 hover:text-black hover:bg-black/5 transition-colors cursor-pointer"
-                              >
-                                <Printer size={15} />
-                              </button>
-                              <button 
-                                onClick={async () => { if (window.confirm(`Delete record?`)) await deleteVerification(item.verificationId || item._id || ''); }} 
-                                title="Delete Record" 
-                                className="p-2 rounded-lg text-black/50 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                              >
-                                <Trash2 size={15} />
-                              </button>
-                            </div>
-                          </td>
-
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-
-          {/* Bottom Clear History Action */}
-          {verifications.length > 0 && (
-            <div className="flex items-center justify-between text-xs font-mono text-black/50 pt-2">
-              <span>Encrypted SHA-256 Vault Records</span>
-              <button 
-                disabled={isClearing} 
-                onClick={async () => {
-                  if (window.confirm('Delete all verification vault records permanently?')) {
-                    setIsClearing(true);
-                    try { await clearAllVerifications(); } finally { setIsClearing(false); }
-                  }
-                }} 
-                className="text-rose-600 hover:underline flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-              >
-                <Trash2 size={13} />
-                <span>{isClearing ? 'Clearing…' : 'Purge All Records'}</span>
-              </button>
+                      <button
+                        onClick={() => deleteVerification(doc.verificationId)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                        title="Delete Record"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
+        </div>
 
-        </section>
+        {/* Clear All Option & Support */}
+        {verifications.length > 0 && (
+          <div className="flex justify-end pt-2">
+            <button
+              onClick={() => {
+                if (window.confirm('Are you sure you want to clear all archived verification records?')) {
+                  clearAllVerifications();
+                }
+              }}
+              className="text-xs text-rose-600 hover:text-rose-800 transition-colors cursor-pointer font-medium"
+            >
+              Clear Entire Archive
+            </button>
+          </div>
+        )}
 
+        <SupportCard onOpenChat={() => onSelectTab?.('discovery')} />
       </main>
 
-      <DocumentViewerModal 
-        record={selectedDocumentForView} 
-        isOpen={isDocumentModalOpen} 
-        onClose={closeDocumentModal} 
-        onInspectInWorkspace={record => { selectVerification(record); onSelectTab?.('verify'); }} 
-        onPrintReport={record => openReportModal(record)} 
-      />
-      <VerificationReportModal 
-        record={selectedReportDoc} 
-        isOpen={isReportModalOpen} 
-        onClose={closeReportModal} 
-      />
+      {/* Modals */}
+      {isReportModalOpen && selectedReportDoc && (
+        <VerificationReportModal
+          isOpen={isReportModalOpen}
+          onClose={closeReportModal}
+          doc={selectedReportDoc}
+        />
+      )}
+
+      {isDocumentModalOpen && selectedDocumentForView && (
+        <DocumentViewerModal
+          isOpen={isDocumentModalOpen}
+          onClose={closeDocumentModal}
+          record={selectedDocumentForView}
+        />
+      )}
     </div>
   );
 };
+
+export default HistoryPage;

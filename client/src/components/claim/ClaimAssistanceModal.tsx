@@ -3,11 +3,12 @@ import {
   X, ShieldCheck, ExternalLink, FileText, User, Phone, Mail,
   Building2, Hash, AlertTriangle, CheckCircle2, ArrowLeft, ArrowRight,
   Upload, Trash2, CalendarDays, MessageSquare, HelpCircle, ClipboardList,
-  ChevronRight, AlertCircle, Loader2, Sparkles, FileCheck, Lock
+  ChevronRight, AlertCircle, Loader2, FileCheck, Lock
 } from 'lucide-react';
 import { useClaimStore, ClaimFormData, CLAIM_STATUS_STEPS, lookupVerifiedClaimPortal } from '../../store/useClaimStore';
 import { useVerifyStore, VerificationRecord } from '../../store/useVerifyStore';
 import { useProviderStore } from '../../store/useProviderStore';
+import { StatusIndicator } from '../ui/StatusIndicator';
 
 // ─── Document Checklist by Policy Type ────────────────────────────────────────
 const CHECKLIST_BY_POLICY_TYPE: Record<string, { label: string; available: boolean }[]> = {
@@ -83,10 +84,13 @@ const CLAIM_TYPES = [
   'Other',
 ];
 
-// ─── Animations ──────────────────────────────────────────────────────────────
-const fadeIn = 'animate-[fadeInUp_0.3s_ease_both]';
+// Helper styles for inputs
+const clsInput = (err?: string) => `
+  w-full px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 outline-none
+  bg-white border ${err ? 'border-rose-400 bg-rose-50/20 text-rose-950' : 'border-slate-300 text-slate-900'}
+  placeholder:text-slate-400 focus:border-[#0369A1] focus:ring-2 focus:ring-sky-100
+`;
 
-// ─── Main Modal ───────────────────────────────────────────────────────────────
 interface ClaimAssistanceModalProps {
   verification: VerificationRecord;
 }
@@ -95,8 +99,8 @@ export const ClaimAssistanceModal: React.FC<ClaimAssistanceModalProps> = ({ veri
   const { isModalOpen, activeStep, closeClaimModal, setActiveStep, submitClaimAssistance, isSubmitting, submitError, lastSubmittedClaimId, clearSubmitError } = useClaimStore();
   const { openRedirectModal, providers } = useProviderStore();
 
-  const fields = verification.extractedFields;
-  const extractedInsurer = (verification as any).carrierName || fields?.insurer?.value || verification.trustedRegistryMatch?.providerName || '';
+  const fields = verification?.extractedFields;
+  const extractedInsurer = (verification as any)?.carrierName || fields?.insurer?.value || verification?.trustedRegistryMatch?.providerName || '';
   const extractedPolicyNumber = fields?.policy_number?.value || '';
   const extractedPolicyType = fields?.policy_type?.value || '';
   const extractedPolicyholder = fields?.policyholder?.value || '';
@@ -150,14 +154,14 @@ export const ClaimAssistanceModal: React.FC<ClaimAssistanceModalProps> = ({ veri
     const errors: Partial<Record<keyof ClaimFormData, string>> = {};
     if (!form.fullName.trim()) errors.fullName = 'Full name is required.';
     if (!form.email.trim() && !form.phone.trim()) {
-      errors.email = 'Provide at least one contact method.';
-      errors.phone = 'Provide at least one contact method.';
+      errors.email = 'Provide at least one contact email or phone.';
+      errors.phone = 'Provide at least one contact email or phone.';
     }
     if (!form.insuranceCompany.trim()) errors.insuranceCompany = 'Insurance company is required.';
     if (!form.policyNumber.trim()) errors.policyNumber = 'Policy number is required.';
-    if (!form.claimType) errors.claimType = 'Please select a claim type.';
+    if (!form.claimType) errors.claimType = 'Please select a claim category.';
     if (!form.dateOfIncident) errors.dateOfIncident = 'Date of incident is required.';
-    if (!form.description.trim() || form.description.trim().length < 20) errors.description = 'Please provide at least 20 characters.';
+    if (!form.description.trim() || form.description.trim().length < 15) errors.description = 'Please describe the incident in at least 15 characters.';
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -167,7 +171,7 @@ export const ClaimAssistanceModal: React.FC<ClaimAssistanceModalProps> = ({ veri
     try {
       await submitClaimAssistance(form, verification.verificationId);
     } catch (_e) {
-      // Error is in store already
+      // Error in store
     }
   };
 
@@ -187,49 +191,49 @@ export const ClaimAssistanceModal: React.FC<ClaimAssistanceModalProps> = ({ veri
     }));
   };
 
-  // ─── Backdrop & Container ────────────────────────────────────────────────────
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
       onClick={e => { if (e.target === e.currentTarget) closeClaimModal(); }}
       role="dialog"
       aria-modal="true"
-      aria-label="Claim Insurance Modal"
+      aria-label="Claim Filing & Guidance"
     >
       <div
         ref={modalRef}
-        className={`relative w-full max-w-2xl bg-[#0D131F] border border-slate-700/60 rounded-3xl shadow-2xl shadow-black/60 flex flex-col max-h-[92vh] overflow-hidden ${fadeIn}`}
+        className="relative w-full max-w-2xl bg-white border border-slate-200/90 rounded-3xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden"
       >
         {/* Header */}
-        <div className="px-6 pt-5 pb-4 border-b border-slate-800 flex items-center justify-between shrink-0">
+        <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between shrink-0 bg-slate-50/50">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg">
-              <ShieldCheck size={18} className="text-slate-950" />
+            <div className="w-10 h-10 rounded-2xl bg-sky-50 text-[#0369A1] flex items-center justify-center border border-sky-100">
+              <ShieldCheck size={20} />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white">Claim Insurance</h2>
-              <p className="text-[11px] text-slate-400 font-medium">
-                {activeStep === 'choose' && 'Choose how to proceed with your claim'}
-                {activeStep === 'direct' && 'Claim Directly With Your Insurer'}
-                {activeStep === 'assistance' && 'Request Claim Assistance'}
-                {activeStep === 'success' && 'Request Submitted'}
+              <h2 className="text-lg font-semibold text-[#0F172A]">Claim Assistance &amp; Guidance</h2>
+              <p className="text-xs text-slate-500 font-medium">
+                {activeStep === 'choose' && 'Choose your preferred claim path'}
+                {activeStep === 'direct' && 'Direct official insurer portal'}
+                {activeStep === 'assistance' && 'ClearCalm claim concierge form'}
+                {activeStep === 'success' && 'Filing recorded successfully'}
               </p>
             </div>
           </div>
+
           <div className="flex items-center gap-2">
             {(activeStep === 'direct' || activeStep === 'assistance') && (
               <button
                 onClick={() => setActiveStep('choose')}
-                className="p-2 rounded-xl text-slate-400 hover:text-cyan-300 hover:bg-slate-800 transition-colors flex items-center gap-1 text-xs"
+                className="px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1 text-xs font-semibold cursor-pointer"
                 aria-label="Go back"
               >
                 <ArrowLeft size={14} />
-                <span className="hidden sm:inline">Back</span>
+                <span>Back</span>
               </button>
             )}
             <button
               onClick={closeClaimModal}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
               aria-label="Close"
             >
               <X size={18} />
@@ -237,99 +241,85 @@ export const ClaimAssistanceModal: React.FC<ClaimAssistanceModalProps> = ({ veri
           </div>
         </div>
 
-        {/* Body */}
+        {/* Modal Body */}
         <div className="flex-1 overflow-y-auto">
 
-          {/* ─── Step: Choose ──────────────────────────────────────────────── */}
+          {/* 1. CHOOSE STEP */}
           {activeStep === 'choose' && (
-            <div className={`p-6 space-y-5 ${fadeIn}`}>
-              {/* Verified Policy Summary */}
-              <div className="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-700/40 space-y-2">
-                <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold">
-                  <FileCheck size={14} />
-                  <span>Verified Policy Ready for Claim</span>
+            <div className="p-6 space-y-6">
+              {/* Verified policy pill */}
+              <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200/80 flex items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2 text-emerald-900 font-semibold">
+                  <FileCheck size={16} className="text-emerald-700 shrink-0" />
+                  <span>Verified Policy Contract: {extractedPolicyNumber || 'Uploaded Copy'}</span>
                 </div>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs mt-1">
-                  <div>
-                    <span className="text-slate-400 block">Insurance Company</span>
-                    <span className="text-slate-100 font-semibold">{extractedInsurer || 'Not extracted'}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block">Policy Number</span>
-                    <span className="text-slate-100 font-semibold font-mono">{extractedPolicyNumber || 'Not extracted'}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block">Policy Type</span>
-                    <span className="text-slate-100 font-semibold">{extractedPolicyType || 'Not specified'}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block">Policyholder</span>
-                    <span className="text-slate-100 font-semibold">{extractedPolicyholder || 'Not extracted'}</span>
-                  </div>
-                </div>
+                <span className="text-emerald-800 font-medium truncate max-w-[200px]">{extractedInsurer || 'Official Carrier'}</span>
               </div>
 
-              {/* Choose Method Cards */}
-              <p className="text-xs text-slate-400 font-medium">How would you like to proceed?</p>
+              <div className="space-y-2">
+                <h3 className="text-base font-semibold text-[#0F172A]">
+                  How would you like to proceed?
+                </h3>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  You can file directly on your insurer's official IRDAI portal, or request guidance from ClearCalm to prepare your documents and checklist.
+                </p>
+              </div>
 
+              {/* Two clear choices without visual noise */}
               <div className="grid sm:grid-cols-2 gap-4">
-                {/* Option A: Direct Insurer */}
-                <button
-                  id="claim-direct-btn"
+                {/* Option 1: Direct */}
+                <div
                   onClick={() => setActiveStep('direct')}
-                  className="text-left p-5 rounded-2xl border border-cyan-500/30 bg-cyan-950/10 hover:bg-cyan-950/30 hover:border-cyan-400/60 transition-all group space-y-3"
+                  className="p-5 rounded-2xl bg-white border border-slate-200 hover:border-[#0369A1] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between space-y-4 group"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-cyan-950/60 border border-cyan-500/40 text-cyan-400 flex items-center justify-center">
-                    <Building2 size={20} />
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">Claim Through Insurer</h3>
-                    <p className="text-[11px] text-slate-400 leading-relaxed">
-                      Go directly to your insurance company's official claim portal to submit your claim.
+                  <div className="space-y-2">
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 group-hover:bg-sky-50 group-hover:text-[#0369A1] transition-colors flex items-center justify-center">
+                      <ExternalLink size={18} />
+                    </div>
+                    <h4 className="text-sm font-semibold text-[#0F172A]">
+                      Claim Directly with Insurer
+                    </h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      Go directly to {extractedInsurer || "your carrier"}'s verified claims portal with your document checklist.
                     </p>
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-cyan-400 font-semibold">
-                    <span>View Portal Details</span>
-                    <ChevronRight size={12} />
-                  </div>
-                </button>
 
-                {/* Option B: Claim Assistance */}
-                <button
-                  id="claim-assistance-btn"
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0369A1] pt-1">
+                    <span>View Direct Portal</span>
+                    <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+                  </span>
+                </div>
+
+                {/* Option 2: Assistance */}
+                <div
                   onClick={() => setActiveStep('assistance')}
-                  className="text-left p-5 rounded-2xl border border-emerald-500/30 bg-emerald-950/10 hover:bg-emerald-950/30 hover:border-emerald-400/60 transition-all group space-y-3"
+                  className="p-5 rounded-2xl bg-white border border-slate-200 hover:border-[#0369A1] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between space-y-4 group"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-400 flex items-center justify-center">
-                    <HelpCircle size={20} />
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors">Request Claim Assistance</h3>
-                    <p className="text-[11px] text-slate-400 leading-relaxed">
-                      Not sure how to file a claim? Submit your details and get step-by-step guidance from ClearClaim.
+                  <div className="space-y-2">
+                    <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#0369A1] flex items-center justify-center">
+                      <MessageSquare size={18} />
+                    </div>
+                    <h4 className="text-sm font-semibold text-[#0F172A]">
+                      ClearCalm Claim Assistance
+                    </h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      We pre-fill your policy terms, review required bills, and audit coverage limits before you submit to the insurer.
                     </p>
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-emerald-400 font-semibold">
-                    <span>Start Assistance Request</span>
-                    <ChevronRight size={12} />
-                  </div>
-                </button>
+
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0369A1] pt-1">
+                    <span>Prepare Assistance Request</span>
+                    <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+                  </span>
+                </div>
               </div>
 
-              {/* Document Checklist */}
+              {/* Informational Checklist Preview */}
               <DocumentChecklist policyType={extractedPolicyType} />
-
-              {/* Disclaimer */}
-              <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-[10px] text-slate-400 leading-relaxed flex items-start gap-2">
-                <Lock size={12} className="text-slate-500 mt-0.5 shrink-0" />
-                <span>
-                  <strong className="text-slate-300">ClearClaim is a verification and guidance platform</strong> — not an insurance company. Claim assistance requests are logged securely and not shared with insurers without your consent.
-                </span>
-              </div>
             </div>
           )}
 
-          {/* ─── Step: Direct Insurer ──────────────────────────────────────── */}
+          {/* 2. DIRECT INSURER STEP */}
           {activeStep === 'direct' && (
             <DirectInsurerPanel
               insurer={extractedInsurer}
@@ -338,11 +328,10 @@ export const ClaimAssistanceModal: React.FC<ClaimAssistanceModalProps> = ({ veri
               portalInfo={portalInfo}
               providers={providers}
               openRedirectModal={openRedirectModal}
-              checklist={checklist}
             />
           )}
 
-          {/* ─── Step: Assistance Form ─────────────────────────────────────── */}
+          {/* 3. ASSISTANCE FORM STEP */}
           {activeStep === 'assistance' && (
             <AssistanceForm
               form={form}
@@ -358,7 +347,7 @@ export const ClaimAssistanceModal: React.FC<ClaimAssistanceModalProps> = ({ veri
             />
           )}
 
-          {/* ─── Step: Success ─────────────────────────────────────────────── */}
+          {/* 4. SUCCESS STEP */}
           {activeStep === 'success' && lastSubmittedClaimId && (
             <SuccessPanel claimId={lastSubmittedClaimId} onClose={closeClaimModal} />
           )}
@@ -368,37 +357,31 @@ export const ClaimAssistanceModal: React.FC<ClaimAssistanceModalProps> = ({ veri
   );
 };
 
-// ─── Document Checklist Sub-component ────────────────────────────────────────
+// ─── Checklist Component ─────────────────────────────────────────────────────
 function DocumentChecklist({ policyType }: { policyType?: string }) {
   const checklist = getChecklist(policyType);
   return (
-    <div className="p-4 rounded-2xl bg-slate-900/50 border border-slate-800 space-y-3">
-      <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-        <ClipboardList size={14} className="text-cyan-400" />
-        <span>Documents You May Need</span>
+    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3">
+      <div className="flex items-center gap-2 text-xs font-semibold text-[#0F172A]">
+        <ClipboardList size={14} className="text-[#0369A1]" />
+        <span>Essential Documents Usually Required for Settlement</span>
       </div>
-      <div className="space-y-1.5">
+      <div className="grid sm:grid-cols-2 gap-2">
         {checklist.map((item, i) => (
-          <div key={i} className="flex items-center gap-2.5 text-xs">
-            <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${item.available ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-500'}`}>
-              {item.available ? <CheckCircle2 size={10} /> : <div className="w-1.5 h-1.5 rounded-full bg-slate-600" />}
+          <div key={i} className="flex items-center gap-2 text-xs text-slate-700">
+            <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${item.available ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-500'}`}>
+              {item.available ? <CheckCircle2 size={11} /> : <div className="w-1.5 h-1.5 rounded-full bg-slate-500" />}
             </div>
-            <span className={item.available ? 'text-slate-200' : 'text-slate-400'}>{item.label}</span>
-            {item.available && <span className="text-[10px] text-emerald-500 font-semibold">(Available from policy)</span>}
+            <span className={item.available ? 'font-medium text-slate-900' : 'text-slate-600'}>{item.label}</span>
           </div>
         ))}
       </div>
-      <p className="text-[10px] text-slate-500 leading-relaxed">
-        This checklist is informational only. Actual document requirements vary by insurer, claim type, and individual circumstances.
-      </p>
     </div>
   );
 }
 
-// ─── Direct Insurer Panel ─────────────────────────────────────────────────────
-function DirectInsurerPanel({
-  insurer, policyNumber, policyType, portalInfo, providers, openRedirectModal, checklist
-}: any) {
+// ─── Direct Insurer Panel ────────────────────────────────────────────────────
+function DirectInsurerPanel({ insurer, policyNumber, policyType, portalInfo, providers, openRedirectModal }: any) {
   const matchedProvider = providers.find((p: any) =>
     insurer && (
       p.providerName.toLowerCase().includes(insurer.toLowerCase()) ||
@@ -407,446 +390,323 @@ function DirectInsurerPanel({
   );
 
   return (
-    <div className={`p-6 space-y-5 ${fadeIn}`}>
-      <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
-        <h3 className="text-sm font-bold text-white flex items-center gap-2">
-          <Building2 size={16} className="text-cyan-400" />
-          Claim Directly With Your Insurer
-        </h3>
+    <div className="p-6 space-y-6">
+      <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-4">
+        <div className="flex items-center gap-2 text-sm font-semibold text-[#0F172A]">
+          <Building2 size={16} className="text-[#0369A1]" />
+          <span>Official Carrier Claim Portal</span>
+        </div>
 
-        <div className="grid grid-cols-1 gap-3 text-xs">
-          <InfoRow label="Insurance Provider" value={insurer || 'Not detected from document'} highlight />
-          <InfoRow label="Policy Number" value={policyNumber || 'Not extracted'} mono />
-          <InfoRow label="Policy Type" value={policyType || 'Not specified'} />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-white p-3.5 rounded-xl border border-slate-200">
+          <div>
+            <span className="text-slate-400 block text-[11px]">Carrier</span>
+            <span className="font-semibold text-slate-900">{insurer || 'Official Provider'}</span>
+          </div>
+          <div>
+            <span className="text-slate-400 block text-[11px]">Policy Number</span>
+            <span className="font-mono font-medium text-slate-900">{policyNumber || 'Not extracted'}</span>
+          </div>
+          <div>
+            <span className="text-slate-400 block text-[11px]">Type</span>
+            <span className="text-slate-800 capitalize">{policyType || 'General'}</span>
+          </div>
         </div>
 
         {portalInfo ? (
-          <div className="space-y-3">
-            <p className="text-[11px] text-slate-400 leading-relaxed">
-              Use the insurer's official claim portal to submit your claim. ClearClaim will open this link in a new tab for your safety.
+          <div className="space-y-3 pt-1">
+            <p className="text-xs text-slate-600 leading-relaxed">
+              ClearCalm has verified the official claim portal for {insurer}. Click below to visit the authentic insurer page safely in a new tab.
             </p>
-            <div className="p-3 rounded-xl bg-emerald-950/20 border border-emerald-700/40 flex items-center justify-between gap-3">
-              <div className="text-xs">
-                <span className="text-emerald-400 font-semibold">{portalInfo.label}</span>
-                <p className="text-slate-400 text-[10px] mt-0.5">Verified official claims page</p>
+            <div className="p-4 rounded-xl bg-sky-50 border border-sky-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <span className="text-sm font-semibold text-[#0369A1] block">{portalInfo.label}</span>
+                <span className="text-xs text-slate-500">Official IRDAI-accredited portal link</span>
               </div>
               <a
-                id="go-to-official-claim-page"
                 href={portalInfo.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 transition-all whitespace-nowrap"
-                onClick={() => {
-                  // Audit-friendly: log before redirect
-                  console.info('[ClearClaim] User redirecting to official insurer claim portal:', portalInfo.url);
-                }}
+                className="btn-primary !text-xs !py-2 !px-4"
               >
+                <span>Go to Official Claim Page</span>
                 <ExternalLink size={13} />
-                Go to Official Claim Page
               </a>
             </div>
           </div>
         ) : (
-          <div className="p-4 rounded-2xl bg-amber-950/20 border border-amber-700/40 space-y-2">
-            <div className="flex items-center gap-2 text-amber-400 text-xs font-bold">
+          <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs space-y-2 text-amber-950">
+            <span className="font-semibold flex items-center gap-1.5 text-amber-900">
               <AlertTriangle size={14} />
-              <span>Official Claim Portal Not Found</span>
-            </div>
-            <p className="text-[11px] text-slate-300 leading-relaxed">
-              We couldn't verify the official claim portal for <strong>{insurer || 'this insurer'}</strong>.
-              For your security, ClearClaim will not provide an unverified link.
-            </p>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
-              Please visit your insurer's official website directly and locate their "Claims" or "File a Claim" section.
+              Portal Link Not Auto-Resolved
+            </span>
+            <p className="text-slate-700 leading-relaxed">
+              We couldn't auto-resolve the exact portal for <strong>{insurer || 'this insurer'}</strong>. For your safety, we do not provide unverified links. Please visit your insurer's official website directly.
             </p>
             {matchedProvider && (
               <button
                 onClick={() => openRedirectModal(matchedProvider)}
-                className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/20 transition-colors"
+                className="btn-secondary !text-xs !py-1.5 !px-3 mt-1"
               >
                 <ExternalLink size={12} />
-                Visit {matchedProvider.shortName} Official Website
+                <span>Visit {matchedProvider.shortName} Official Registry Page</span>
               </button>
             )}
           </div>
         )}
       </div>
 
-      {/* Checklist */}
       <DocumentChecklist policyType={policyType} />
 
-      <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-[10px] text-slate-400 leading-relaxed flex items-start gap-2">
-        <Lock size={12} className="text-slate-500 mt-0.5 shrink-0" />
-        <span>
-          ClearClaim does not submit claims on your behalf when using the direct insurer option. You will be redirected to the insurer's official portal to complete the process independently.
-        </span>
+      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 leading-relaxed flex items-center gap-2">
+        <Lock size={13} className="text-slate-500 shrink-0" />
+        <span>ClearCalm guarantees never to submit claims without your explicit review and consent.</span>
       </div>
     </div>
   );
 }
 
-// ─── Assistance Form ──────────────────────────────────────────────────────────
+// ─── Assistance Form Component ───────────────────────────────────────────────
 function AssistanceForm({ form, errors, isSubmitting, submitError, fileInputRef, updateField, handleSubmit, handleFileAdd, removeFile, checklist }: any) {
   return (
-    <div className={`p-6 space-y-5 ${fadeIn}`}>
-      <div className="p-3 rounded-xl bg-cyan-950/20 border border-cyan-800/40 text-[11px] text-cyan-200 leading-relaxed flex items-start gap-2">
-        <Sparkles size={12} className="text-cyan-400 mt-0.5 shrink-0" />
-        <span>Policy information has been <strong>auto-filled</strong> from your verified document. Please review and correct any inaccurate details before submitting.</span>
+    <div className="p-6 space-y-5">
+      <div className="p-3.5 rounded-xl bg-sky-50 border border-sky-100 text-xs text-[#0369A1] flex items-center gap-2">
+        <CheckCircle2 size={14} className="shrink-0 text-[#0369A1]" />
+        <span>Information has been pre-filled from your verified policy document. Please review and complete remaining incident details.</span>
       </div>
 
+      {submitError && (
+        <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-900 flex items-center gap-2">
+          <AlertCircle size={14} className="shrink-0 text-rose-600" />
+          <span>{submitError}</span>
+        </div>
+      )}
+
       <div className="space-y-4">
-        {/* Personal Information */}
-        <SectionHeading icon={<User size={14} />} title="Personal Information" />
+        {/* Policyholder Details */}
+        <div className="grid sm:grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-semibold text-slate-700 block mb-1">Full Legal Name *</label>
+            <input
+              type="text"
+              value={form.fullName}
+              onChange={e => updateField('fullName', e.target.value)}
+              placeholder="e.g. Ramesh Kumar"
+              className={clsInput(errors.fullName)}
+            />
+            {errors.fullName && <p className="text-[11px] text-rose-600 mt-1">{errors.fullName}</p>}
+          </div>
 
-        <FormField
-          label="Full Name"
-          required
-          error={errors.fullName}
-          hint="Name of the primary policyholder or claimant"
-        >
-          <input
-            id="claim-fullname"
-            type="text"
-            value={form.fullName}
-            onChange={e => updateField('fullName', e.target.value)}
-            placeholder="e.g. Aditya Sharma"
-            className={clsInput(errors.fullName)}
-          />
-        </FormField>
-
-        <div className="grid sm:grid-cols-2 gap-4">
-          <FormField label="Email Address" error={errors.email}>
-            <div className="relative">
-              <Mail size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-              <input
-                id="claim-email"
-                type="email"
-                value={form.email}
-                onChange={e => updateField('email', e.target.value)}
-                placeholder="you@example.com"
-                className={`${clsInput(errors.email)} pl-8`}
-              />
-            </div>
-          </FormField>
-
-          <FormField label="Phone Number" error={errors.phone}>
-            <div className="relative">
-              <Phone size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-              <input
-                id="claim-phone"
-                type="tel"
-                value={form.phone}
-                onChange={e => updateField('phone', e.target.value)}
-                placeholder="+91 98765 43210"
-                className={`${clsInput(errors.phone)} pl-8`}
-              />
-            </div>
-          </FormField>
+          <div>
+            <label className="text-xs font-semibold text-slate-700 block mb-1">Email Address</label>
+            <input
+              type="email"
+              value={form.email}
+              onChange={e => updateField('email', e.target.value)}
+              placeholder="name@example.com"
+              className={clsInput(errors.email)}
+            />
+            {errors.email && <p className="text-[11px] text-rose-600 mt-1">{errors.email}</p>}
+          </div>
         </div>
 
-        {/* Policy Details */}
-        <SectionHeading icon={<FileText size={14} />} title="Policy Details" />
-
-        <FormField label="Insurance Company" required error={errors.insuranceCompany}>
-          <div className="relative">
-            <Building2 size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+        <div className="grid sm:grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-semibold text-slate-700 block mb-1">Phone Number</label>
             <input
-              id="claim-insurer"
+              type="tel"
+              value={form.phone}
+              onChange={e => updateField('phone', e.target.value)}
+              placeholder="+91 98765 43210"
+              className={clsInput(errors.phone)}
+            />
+            {errors.phone && <p className="text-[11px] text-rose-600 mt-1">{errors.phone}</p>}
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-slate-700 block mb-1">Preferred Contact</label>
+            <select
+              value={form.preferredContactMethod}
+              onChange={e => updateField('preferredContactMethod', e.target.value)}
+              className={clsInput()}
+            >
+              <option value="email">Email</option>
+              <option value="phone">Phone / WhatsApp</option>
+              <option value="both">Both</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Policy Identification */}
+        <div className="grid sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+          <div>
+            <label className="text-xs font-semibold text-slate-700 block mb-1">Insurer Carrier *</label>
+            <input
               type="text"
               value={form.insuranceCompany}
               onChange={e => updateField('insuranceCompany', e.target.value)}
-              placeholder="e.g. HDFC ERGO General Insurance"
-              className={`${clsInput(errors.insuranceCompany)} pl-8`}
+              className={clsInput(errors.insuranceCompany)}
             />
+            {errors.insuranceCompany && <p className="text-[11px] text-rose-600 mt-1">{errors.insuranceCompany}</p>}
           </div>
-        </FormField>
 
-        <div className="grid sm:grid-cols-2 gap-4">
-          <FormField label="Policy Number" required error={errors.policyNumber}>
-            <div className="relative">
-              <Hash size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-              <input
-                id="claim-policy-number"
-                type="text"
-                value={form.policyNumber}
-                onChange={e => updateField('policyNumber', e.target.value)}
-                placeholder="e.g. POL-2026-001234"
-                className={`${clsInput(errors.policyNumber)} pl-8 font-mono`}
-              />
-            </div>
-          </FormField>
-
-          <FormField label="Policy Type">
+          <div>
+            <label className="text-xs font-semibold text-slate-700 block mb-1">Policy Contract Number *</label>
             <input
-              id="claim-policy-type"
               type="text"
-              value={form.policyType}
-              onChange={e => updateField('policyType', e.target.value)}
-              placeholder="e.g. Health Insurance"
-              className={clsInput()}
+              value={form.policyNumber}
+              onChange={e => updateField('policyNumber', e.target.value)}
+              className={`${clsInput(errors.policyNumber)} font-mono`}
             />
-          </FormField>
+            {errors.policyNumber && <p className="text-[11px] text-rose-600 mt-1">{errors.policyNumber}</p>}
+          </div>
         </div>
 
-        {/* Claim Details */}
-        <SectionHeading icon={<ClipboardList size={14} />} title="Claim Details" />
-
-        <div className="grid sm:grid-cols-2 gap-4">
-          <FormField label="Claim Type" required error={errors.claimType}>
+        {/* Claim Nature */}
+        <div className="grid sm:grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-semibold text-slate-700 block mb-1">Claim Incident Type *</label>
             <select
-              id="claim-type"
               value={form.claimType}
               onChange={e => updateField('claimType', e.target.value)}
               className={clsInput(errors.claimType)}
             >
-              <option value="">Select claim type…</option>
+              <option value="">Select claim category…</option>
               {CLAIM_TYPES.map(ct => (
                 <option key={ct} value={ct}>{ct}</option>
               ))}
             </select>
-          </FormField>
+            {errors.claimType && <p className="text-[11px] text-rose-600 mt-1">{errors.claimType}</p>}
+          </div>
 
-          <FormField label="Date of Incident" required error={errors.dateOfIncident}>
-            <div className="relative">
-              <CalendarDays size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-              <input
-                id="claim-date"
-                type="date"
-                value={form.dateOfIncident}
-                max={new Date().toISOString().split('T')[0]}
-                onChange={e => updateField('dateOfIncident', e.target.value)}
-                className={`${clsInput(errors.dateOfIncident)} pl-8`}
-              />
-            </div>
-          </FormField>
+          <div>
+            <label className="text-xs font-semibold text-slate-700 block mb-1">Date of Incident *</label>
+            <input
+              type="date"
+              value={form.dateOfIncident}
+              onChange={e => updateField('dateOfIncident', e.target.value)}
+              className={clsInput(errors.dateOfIncident)}
+            />
+            {errors.dateOfIncident && <p className="text-[11px] text-rose-600 mt-1">{errors.dateOfIncident}</p>}
+          </div>
         </div>
 
-        <FormField label="Short Description of Claim" required error={errors.description} hint="Minimum 20 characters">
-          <div className="relative">
-            <MessageSquare size={13} className="absolute left-3 top-3.5 text-slate-500" />
-            <textarea
-              id="claim-description"
-              value={form.description}
-              onChange={e => updateField('description', e.target.value)}
-              rows={3}
-              maxLength={2000}
-              placeholder="Briefly describe what happened and what you are claiming for…"
-              className={`${clsInput(errors.description)} pl-8 resize-none`}
-            />
-          </div>
-          <div className="text-right text-[10px] text-slate-500">{form.description.length}/2000</div>
-        </FormField>
+        <div>
+          <label className="text-xs font-semibold text-slate-700 block mb-1">Incident Summary &amp; Loss Details *</label>
+          <textarea
+            rows={3}
+            value={form.description}
+            onChange={e => updateField('description', e.target.value)}
+            placeholder="Briefly describe what happened, hospital or repair shop details, and estimated expenses…"
+            className={clsInput(errors.description)}
+          />
+          {errors.description && <p className="text-[11px] text-rose-600 mt-1">{errors.description}</p>}
+        </div>
 
-        {/* Preferred Contact */}
-        <FormField label="Preferred Contact Method">
-          <div className="flex gap-3 flex-wrap">
-            {(['email', 'phone', 'both'] as const).map(method => (
-              <label key={method} className="flex items-center gap-2 cursor-pointer group">
-                <input
-                  type="radio"
-                  name="contactMethod"
-                  value={method}
-                  checked={form.preferredContactMethod === method}
-                  onChange={() => updateField('preferredContactMethod', method)}
-                  className="accent-cyan-400"
-                />
-                <span className="text-xs text-slate-300 capitalize group-hover:text-white transition-colors">{method}</span>
-              </label>
-            ))}
-          </div>
-        </FormField>
-
-        {/* Document Upload */}
-        <SectionHeading icon={<Upload size={14} />} title="Upload Supporting Documents" />
-        <p className="text-[11px] text-slate-400 -mt-2 leading-relaxed">
-          Upload up to 5 files (PDF, JPG, PNG, DOC — max 10MB each). Documents are stored securely and not shared publicly.
-        </p>
-
-        <div
-          className="border-2 border-dashed border-slate-700 rounded-2xl p-5 text-center cursor-pointer hover:border-cyan-500/60 transition-colors group"
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <Upload size={22} className="text-slate-500 group-hover:text-cyan-400 mx-auto mb-2 transition-colors" />
-          <p className="text-xs text-slate-400 group-hover:text-slate-300 transition-colors">
-            Click to upload or drag & drop
-          </p>
-          <p className="text-[10px] text-slate-500 mt-1">PDF, JPG, PNG, DOC up to 10MB</p>
+        {/* Supporting Files Upload */}
+        <div className="space-y-2 pt-2 border-t border-slate-100">
+          <label className="text-xs font-semibold text-slate-700 block">Supporting Receipts / Documents (Optional, up to 5)</label>
           <input
             ref={fileInputRef}
             type="file"
             multiple
-            accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.doc,.docx"
-            className="hidden"
+            accept=".pdf,.png,.jpg,.jpeg"
             onChange={e => handleFileAdd(e.target.files)}
+            className="hidden"
           />
-        </div>
 
-        {form.supportingFiles.length > 0 && (
-          <div className="space-y-2">
-            {form.supportingFiles.map((f: File, i: number) => (
-              <div key={i} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs">
-                <div className="flex items-center gap-2">
-                  <FileText size={13} className="text-cyan-400 shrink-0" />
-                  <span className="text-slate-300 truncate max-w-xs">{f.name}</span>
-                  <span className="text-slate-500">({(f.size / 1024).toFixed(0)} KB)</span>
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            className="p-4 rounded-xl border border-dashed border-slate-300 hover:border-[#0369A1] hover:bg-slate-50 transition-colors text-center cursor-pointer"
+          >
+            <Upload className="w-5 h-5 text-slate-400 mx-auto mb-1" />
+            <span className="text-xs font-medium text-slate-700 block">Click to attach hospital bills, repair estimates, or FIR copies</span>
+            <span className="text-[11px] text-slate-400">PDF, JPG, PNG up to 10MB</span>
+          </div>
+
+          {form.supportingFiles.length > 0 && (
+            <div className="space-y-1.5 pt-1">
+              {form.supportingFiles.map((f: File, i: number) => (
+                <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs">
+                  <span className="truncate max-w-xs text-slate-700 font-medium">{f.name}</span>
+                  <button
+                    onClick={() => removeFile(i)}
+                    className="text-slate-400 hover:text-rose-600 p-1 cursor-pointer"
+                    aria-label={`Remove ${f.name}`}
+                  >
+                    <Trash2 size={13} />
+                  </button>
                 </div>
-                <button onClick={() => removeFile(i)} className="text-slate-500 hover:text-red-400 transition-colors">
-                  <Trash2 size={13} />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Checklist */}
-        <DocumentChecklist policyType={form.policyType} />
-
-        {/* Submit Error */}
-        {submitError && (
-          <div className="p-3 rounded-xl bg-red-950/40 border border-red-800/60 text-xs text-red-200 flex items-start gap-2">
-            <AlertCircle size={13} className="text-red-400 mt-0.5 shrink-0" />
-            <span>{submitError}</span>
-          </div>
-        )}
-
-        {/* Disclaimer */}
-        <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-[10px] text-slate-400 leading-relaxed flex items-start gap-2">
-          <Lock size={12} className="text-slate-500 mt-0.5 shrink-0" />
-          <span>
-            This is a <strong className="text-slate-300">ClearClaim assistance request</strong> — not an actual insurance claim with your insurer. Our team will review your information and provide guidance on how to proceed with your insurer's official claims process.
-          </span>
+              ))}
+            </div>
+          )}
         </div>
+      </div>
 
-        {/* Submit Button */}
+      {/* Submit Button */}
+      <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
         <button
-          id="submit-claim-assistance"
+          type="button"
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="w-full btn-primary !py-3 text-sm"
+          className="btn-primary !px-6 !py-2.5"
         >
-          {isSubmitting
-            ? <><Loader2 size={16} className="animate-spin" /> Submitting…</>
-            : <><CheckCircle2 size={16} /> Submit Claim Assistance Request</>}
+          {isSubmitting ? (
+            <>
+              <Loader2 size={15} className="animate-spin" />
+              <span>Submitting Claim Request…</span>
+            </>
+          ) : (
+            <>
+              <span>Submit Claim Assistance Request</span>
+              <ArrowRight size={14} />
+            </>
+          )}
         </button>
       </div>
     </div>
   );
 }
 
-// ─── Success Panel ────────────────────────────────────────────────────────────
+// ─── Success Panel Component ─────────────────────────────────────────────────
 function SuccessPanel({ claimId, onClose }: { claimId: string; onClose: () => void }) {
   return (
-    <div className={`p-6 space-y-6 ${fadeIn}`}>
-      {/* Success Banner */}
-      <div className="text-center space-y-3 py-2">
-        <div className="w-16 h-16 rounded-2xl bg-emerald-950 border border-emerald-700/60 text-emerald-400 flex items-center justify-center mx-auto shadow-lg shadow-emerald-950/40">
-          <CheckCircle2 size={32} />
-        </div>
-        <h3 className="text-lg font-bold text-white">Request Submitted Successfully</h3>
-        <p className="text-sm text-slate-400">Your claim assistance request has been received.</p>
+    <div className="p-8 text-center space-y-5">
+      <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
+        <CheckCircle2 size={28} />
       </div>
 
-      {/* Claim ID */}
-      <div className="p-4 rounded-2xl bg-cyan-950/20 border border-cyan-700/40 text-center space-y-1">
-        <p className="text-[11px] text-slate-400 font-medium">Claim Assistance Request ID</p>
-        <p className="text-2xl font-black text-cyan-300 font-mono tracking-widest">{claimId}</p>
-        <p className="text-[11px] text-slate-500">Save this ID to track your request status</p>
-      </div>
-
-      {/* Status Timeline */}
-      <div className="space-y-3">
-        <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Assistance Progress Timeline</h4>
-        <div className="space-y-0">
-          {CLAIM_STATUS_STEPS.map((step, idx) => {
-            const isActive = idx === 0;
-            const isDone = false;
-            return (
-              <div key={step.key} className="flex gap-3">
-                <div className="flex flex-col items-center">
-                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 text-[10px] font-bold transition-colors ${
-                    isActive
-                      ? 'border-emerald-400 bg-emerald-950 text-emerald-400'
-                      : isDone
-                      ? 'border-cyan-500 bg-cyan-950 text-cyan-400'
-                      : 'border-slate-700 bg-slate-900 text-slate-600'
-                  }`}>
-                    {isActive ? <CheckCircle2 size={12} /> : idx + 1}
-                  </div>
-                  {idx < CLAIM_STATUS_STEPS.length - 1 && (
-                    <div className={`w-0.5 h-6 mt-0.5 ${isActive ? 'bg-emerald-700/40' : 'bg-slate-800'}`} />
-                  )}
-                </div>
-                <div className="pb-4">
-                  <p className={`text-xs font-semibold ${isActive ? 'text-emerald-300' : 'text-slate-400'}`}>{step.label}</p>
-                  {isActive && (
-                    <p className="text-[11px] text-slate-500 leading-relaxed mt-0.5">{step.description}</p>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Guidance Note */}
-      <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-[11px] text-slate-300 leading-relaxed space-y-2">
-        <div className="flex items-center gap-2 text-cyan-300 font-semibold text-xs">
-          <HelpCircle size={13} />
-          <span>What Happens Next</span>
-        </div>
-        <p>
-          Our team can review the submitted information and guide you through the next steps for your insurance claim. This is an <strong>assistance service</strong> — your actual claim must be filed directly with your insurance company.
+      <div className="space-y-1.5 max-w-md mx-auto">
+        <span className="text-xs font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+          Request Logged Successfully
+        </span>
+        <h3 className="text-xl font-bold text-[#0F172A] mt-2">
+          Your Claim Assistance Request is Active
+        </h3>
+        <p className="text-xs text-slate-600 leading-relaxed">
+          Reference Number: <strong className="font-mono text-slate-900">{claimId}</strong>
         </p>
       </div>
 
-      <button onClick={onClose} className="w-full btn-secondary !py-2.5 text-xs">
-        Close
-      </button>
+      {/* What Happens Next Card */}
+      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-left text-xs space-y-2 max-w-md mx-auto">
+        <span className="font-semibold text-slate-900 block">What Happens Next:</span>
+        <ol className="list-decimal pl-4 space-y-1 text-slate-600">
+          <li>Our claims auditor validates your policy limits and deduction clauses.</li>
+          <li>We prepare your official claim dossier checklist within 24 hours.</li>
+          <li>You can track active milestones under the "Claims" tab anytime.</li>
+        </ol>
+      </div>
+
+      <div className="pt-2">
+        <button
+          onClick={onClose}
+          className="btn-primary !px-8 !py-2.5"
+        >
+          Return to Dashboard
+        </button>
+      </div>
     </div>
   );
 }
 
-// ─── Helper Components ────────────────────────────────────────────────────────
-function SectionHeading({ icon, title }: { icon: React.ReactNode; title: string }) {
-  return (
-    <div className="flex items-center gap-2 pt-2">
-      <span className="text-cyan-400">{icon}</span>
-      <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">{title}</h4>
-    </div>
-  );
-}
-
-function FormField({ label, required, error, hint, children }: {
-  label: string; required?: boolean; error?: string; hint?: string; children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-1">
-      <label className="text-xs font-semibold text-slate-300 flex items-center gap-1">
-        {label}
-        {required && <span className="text-red-400">*</span>}
-        {hint && <span className="text-slate-500 font-normal">— {hint}</span>}
-      </label>
-      {children}
-      {error && (
-        <p className="text-[11px] text-red-400 flex items-center gap-1">
-          <AlertCircle size={10} /> {error}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function InfoRow({ label, value, mono, highlight }: { label: string; value: string; mono?: boolean; highlight?: boolean }) {
-  return (
-    <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-950/50 border border-slate-800">
-      <span className="text-slate-400 text-[11px] shrink-0">{label}</span>
-      <span className={`font-semibold text-right truncate max-w-[60%] ${mono ? 'font-mono text-cyan-300' : highlight ? 'text-slate-100' : 'text-slate-300'}`}>
-        {value}
-      </span>
-    </div>
-  );
-}
-
-function clsInput(error?: string) {
-  return `w-full bg-slate-900/70 border ${error ? 'border-red-700/70 focus:border-red-500' : 'border-slate-700 focus:border-cyan-500/70'} rounded-xl px-3 py-2.5 text-xs text-slate-100 placeholder-slate-600 outline-none transition-colors`;
-}
+export default ClaimAssistanceModal;
