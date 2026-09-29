@@ -1,0 +1,36 @@
+================================================================================
+OFFICIAL SCHEDULE OF INSURANCE & POLICY CERTIFICATE
+HERITAGE NATIONAL ASSURANCE
+Underwriting & Risk Assurance Division | Certificate ID: POL-2026-0586
+================================================================================
+
+1. POLICY IDENTIFICATION & HOLDER DETAILS
+--------------------------------------------------------------------------------
+Policy Number:       POL-2026-0586
+Insurer Name:        Heritage National Assurance
+Policyholder Name:   Sunita Mehra
+Operating Location:  Kolkata, India
+Policy Type:         Business Insurance
+
+2. TERM & PERIOD OF COVERAGE
+--------------------------------------------------------------------------------
+Inception / Effective Date:  2026-04-26
+Policy Expiration Date:     2027-04-26
+Policy Duration:            Standard 12-Month Annual Term
+
+3. FINANCIAL UNDERWRITING & PREMIUM SCHEDULE
+--------------------------------------------------------------------------------
+Total Sum Insured / Coverage:   INR 4,800,000
+Applicable Premium Rate:        3.4% per annum
+Standard Compulsory Deductible: INR 50,000
+Total Annual Premium Payable:   INR 163,200
+
+4. CLAIMS & VERIFICATION ATTESTATION
+--------------------------------------------------------------------------------
+This insurance schedule represents the primary contractual basis between the named 
+policyholder and Heritage National Assurance. All claims submitted under Policy POL-2026-0586 
+must satisfy the covenants, warranties, and deductible thresholds described herein.
+
+Disclaimer: This document is artificially generated for academic/software testing 
+purposes and is not a real insurance policy.
+================================================================================

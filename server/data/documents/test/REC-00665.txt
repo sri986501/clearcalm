@@ -1,0 +1,36 @@
+================================================================================
+OFFICIAL SCHEDULE OF INSURANCE & POLICY CERTIFICATE
+APEX GENERAL INSURANCE CORP.
+Underwriting & Risk Assurance Division | Certificate ID: POL-2026-0665
+================================================================================
+
+1. POLICY IDENTIFICATION & HOLDER DETAILS
+--------------------------------------------------------------------------------
+Policy Number:       POL-2026-0665
+Insurer Name:        Apex General Insurance Corp.
+Policyholder Name:   Kavita Nair
+Operating Location:  Hyderabad, India
+Policy Type:         Industrial All-Risk Policy
+
+2. TERM & PERIOD OF COVERAGE
+--------------------------------------------------------------------------------
+Inception / Effective Date:  2026-01-20
+Policy Expiration Date:     2027-01-20
+Policy Duration:            Standard 12-Month Annual Term
+
+3. FINANCIAL UNDERWRITING & PREMIUM SCHEDULE
+--------------------------------------------------------------------------------
+Total Sum Insured / Coverage:   INR 12,600,000
+Applicable Premium Rate:        2.2% per annum
+Standard Compulsory Deductible: INR 15,000
+Total Annual Premium Payable:   INR 277,200
+
+4. CLAIMS & VERIFICATION ATTESTATION
+--------------------------------------------------------------------------------
+This insurance schedule represents the primary contractual basis between the named 
+policyholder and Apex General Insurance Corp.. All claims submitted under Policy POL-2026-0665 
+must satisfy the covenants, warranties, and deductible thresholds described herein.
+
+Disclaimer: This document is artificially generated for academic/software testing 
+purposes and is not a real insurance policy.
+================================================================================

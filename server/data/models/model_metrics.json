@@ -1,0 +1,93 @@
+{
+  "model_name": "Random Forest + Rule Consistency Ensemble",
+  "evaluation_timestamp": "2026-09-16T13:21:53.932889",
+  "dataset_split": {
+    "train_samples": 520,
+    "validation_samples": 110,
+    "test_samples": 110
+  },
+  "test_metrics": {
+    "accuracy": 0.9091,
+    "precision": 1.0,
+    "recall": 0.7368,
+    "f1_score": 0.8485,
+    "roc_auc": 0.8467,
+    "confusion_matrix": {
+      "true_negative": 72,
+      "false_positive": 0,
+      "false_negative": 10,
+      "true_positive": 28
+    },
+    "validation_accuracy": 0.9636,
+    "validation_f1": 0.9444
+  },
+  "feature_importances": [
+    {
+      "feature": "premium_ratio_discrepancy",
+      "importance": 0.25734150355244284
+    },
+    {
+      "feature": "premium_abs_difference",
+      "importance": 0.249701027328911
+    },
+    {
+      "feature": "missing_fields_count",
+      "importance": 0.11251348681299807
+    },
+    {
+      "feature": "policy_number_format_valid",
+      "importance": 0.10702195577563123
+    },
+    {
+      "feature": "deductible_to_coverage_ratio",
+      "importance": 0.05463989642956035
+    },
+    {
+      "feature": "premium_rate_percent",
+      "importance": 0.041882127335020565
+    },
+    {
+      "feature": "date_reversed_flag",
+      "importance": 0.04094725889672574
+    },
+    {
+      "feature": "term_normal_flag",
+      "importance": 0.040318286659232934
+    },
+    {
+      "feature": "date_diff_days",
+      "importance": 0.03469741278276702
+    },
+    {
+      "feature": "deductible_invalid_flag",
+      "importance": 0.03292365701250472
+    },
+    {
+      "feature": "premium_doc_inr",
+      "importance": 0.014402302424002556
+    },
+    {
+      "feature": "coverage_inr",
+      "importance": 0.012329249835531589
+    },
+    {
+      "feature": "insurer_name_valid_flag",
+      "importance": 0.0012818351546712498
+    }
+  ],
+  "feature_names": [
+    "date_diff_days",
+    "date_reversed_flag",
+    "term_normal_flag",
+    "premium_abs_difference",
+    "premium_ratio_discrepancy",
+    "deductible_to_coverage_ratio",
+    "deductible_invalid_flag",
+    "policy_number_format_valid",
+    "missing_fields_count",
+    "insurer_name_valid_flag",
+    "coverage_inr",
+    "premium_rate_percent",
+    "premium_doc_inr"
+  ]
+}

@@ -1,0 +1,36 @@
+================================================================================
+OFFICIAL SCHEDULE OF INSURANCE & POLICY CERTIFICATE
+PINNACLE MUTUAL RISK CORP.
+Underwriting & Risk Assurance Division | Certificate ID: INVALID#0034-XX
+================================================================================
+
+1. POLICY IDENTIFICATION & HOLDER DETAILS
+--------------------------------------------------------------------------------
+Policy Number:       INVALID#0034-XX
+Insurer Name:        Pinnacle Mutual Risk Corp.
+Policyholder Name:   Divya Krishnan
+Operating Location:  Chennai, India
+Policy Type:         Business Insurance
+
+2. TERM & PERIOD OF COVERAGE
+--------------------------------------------------------------------------------
+Inception / Effective Date:  2026-04-16
+Policy Expiration Date:     2027-04-16
+Policy Duration:            Standard 12-Month Annual Term
+
+3. FINANCIAL UNDERWRITING & PREMIUM SCHEDULE
+--------------------------------------------------------------------------------
+Total Sum Insured / Coverage:   INR 3,800,000
+Applicable Premium Rate:        2.8% per annum
+Standard Compulsory Deductible: INR 5,000
+Total Annual Premium Payable:   INR 106,400
+
+4. CLAIMS & VERIFICATION ATTESTATION
+--------------------------------------------------------------------------------
+This insurance schedule represents the primary contractual basis between the named 
+policyholder and Pinnacle Mutual Risk Corp.. All claims submitted under Policy INVALID#0034-XX 
+must satisfy the covenants, warranties, and deductible thresholds described herein.
+
+Disclaimer: This document is artificially generated for academic/software testing 
+purposes and is not a real insurance policy.
+================================================================================

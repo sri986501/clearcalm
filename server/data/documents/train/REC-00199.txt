@@ -1,0 +1,36 @@
+================================================================================
+OFFICIAL SCHEDULE OF INSURANCE & POLICY CERTIFICATE
+BLUESHIELD COMMERCIAL UNDERWRITERS
+Underwriting & Risk Assurance Division | Certificate ID: POL-2026-0199
+================================================================================
+
+1. POLICY IDENTIFICATION & HOLDER DETAILS
+--------------------------------------------------------------------------------
+Policy Number:       POL-2026-0199
+Insurer Name:        BlueShield Commercial Underwriters
+Policyholder Name:   Sunita Mehra
+Operating Location:  New Delhi, India
+Policy Type:         Comprehensive Commercial Liability
+
+2. TERM & PERIOD OF COVERAGE
+--------------------------------------------------------------------------------
+Inception / Effective Date:  2026-04-10
+Policy Expiration Date:     2027-04-10
+Policy Duration:            Standard 12-Month Annual Term
+
+3. FINANCIAL UNDERWRITING & PREMIUM SCHEDULE
+--------------------------------------------------------------------------------
+Total Sum Insured / Coverage:   INR 4,800,000
+Applicable Premium Rate:        1.3% per annum
+Standard Compulsory Deductible: INR 50,000
+Total Annual Premium Payable:   INR 41,600
+
+4. CLAIMS & VERIFICATION ATTESTATION
+--------------------------------------------------------------------------------
+This insurance schedule represents the primary contractual basis between the named 
+policyholder and BlueShield Commercial Underwriters. All claims submitted under Policy POL-2026-0199 
+must satisfy the covenants, warranties, and deductible thresholds described herein.
+
+Disclaimer: This document is artificially generated for academic/software testing 
+purposes and is not a real insurance policy.
+================================================================================

@@ -1,0 +1,36 @@
+================================================================================
+OFFICIAL SCHEDULE OF INSURANCE & POLICY CERTIFICATE
+VANGUARD LIFE & ASSET ASSURANCE
+Underwriting & Risk Assurance Division | Certificate ID: POL-2026-0233
+================================================================================
+
+1. POLICY IDENTIFICATION & HOLDER DETAILS
+--------------------------------------------------------------------------------
+Policy Number:       POL-2026-0233
+Insurer Name:        Vanguard Life & Asset Assurance
+Policyholder Name:   Kavita Nair
+Operating Location:  Ahmedabad, India
+Policy Type:         Comprehensive Commercial Liability
+
+2. TERM & PERIOD OF COVERAGE
+--------------------------------------------------------------------------------
+Inception / Effective Date:  2026-03-06
+Policy Expiration Date:     2027-03-06
+Policy Duration:            Standard 12-Month Annual Term
+
+3. FINANCIAL UNDERWRITING & PREMIUM SCHEDULE
+--------------------------------------------------------------------------------
+Total Sum Insured / Coverage:   INR 4,000,000
+Applicable Premium Rate:        2.2% per annum
+Standard Compulsory Deductible: INR 15,000
+Total Annual Premium Payable:   INR 88,000
+
+4. CLAIMS & VERIFICATION ATTESTATION
+--------------------------------------------------------------------------------
+This insurance schedule represents the primary contractual basis between the named 
+policyholder and Vanguard Life & Asset Assurance. All claims submitted under Policy POL-2026-0233 
+must satisfy the covenants, warranties, and deductible thresholds described herein.
+
+Disclaimer: This document is artificially generated for academic/software testing 
+purposes and is not a real insurance policy.
+================================================================================

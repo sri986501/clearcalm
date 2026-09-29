@@ -1,0 +1,36 @@
+================================================================================
+OFFICIAL SCHEDULE OF INSURANCE & POLICY CERTIFICATE
+ZENITH PREMIER INSURANCE CO.
+Underwriting & Risk Assurance Division | Certificate ID: POL-2026-0147
+================================================================================
+
+1. POLICY IDENTIFICATION & HOLDER DETAILS
+--------------------------------------------------------------------------------
+Policy Number:       POL-2026-0147
+Insurer Name:        Zenith Premier Insurance Co.
+Policyholder Name:   Sunita Mehra
+Operating Location:  Bengaluru, India
+Policy Type:         Corporate Fleet & Asset Cover
+
+2. TERM & PERIOD OF COVERAGE
+--------------------------------------------------------------------------------
+Inception / Effective Date:  2026-01-10
+Policy Expiration Date:     2027-01-10
+Policy Duration:            Standard 12-Month Annual Term
+
+3. FINANCIAL UNDERWRITING & PREMIUM SCHEDULE
+--------------------------------------------------------------------------------
+Total Sum Insured / Coverage:   INR 2,000,000
+Applicable Premium Rate:        4.5% per annum
+Standard Compulsory Deductible: INR 25,000
+Total Annual Premium Payable:   INR 90,000
+
+4. CLAIMS & VERIFICATION ATTESTATION
+--------------------------------------------------------------------------------
+This insurance schedule represents the primary contractual basis between the named 
+policyholder and Zenith Premier Insurance Co.. All claims submitted under Policy POL-2026-0147 
+must satisfy the covenants, warranties, and deductible thresholds described herein.
+
+Disclaimer: This document is artificially generated for academic/software testing 
+purposes and is not a real insurance policy.
+================================================================================

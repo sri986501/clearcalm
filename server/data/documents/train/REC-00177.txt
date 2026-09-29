@@ -1,0 +1,36 @@
+================================================================================
+OFFICIAL SCHEDULE OF INSURANCE & POLICY CERTIFICATE
+FALCON MUTUAL INSURANCE LTD.
+Underwriting & Risk Assurance Division | Certificate ID: POL-2026-0177
+================================================================================
+
+1. POLICY IDENTIFICATION & HOLDER DETAILS
+--------------------------------------------------------------------------------
+Policy Number:       POL-2026-0177
+Insurer Name:        Falcon Mutual Insurance Ltd.
+Policyholder Name:   Anand Rao
+Operating Location:  Kolkata, India
+Policy Type:         Industrial All-Risk Policy
+
+2. TERM & PERIOD OF COVERAGE
+--------------------------------------------------------------------------------
+Inception / Effective Date:  2026-04-16
+Policy Expiration Date:     2027-04-16
+Policy Duration:            Standard 12-Month Annual Term
+
+3. FINANCIAL UNDERWRITING & PREMIUM SCHEDULE
+--------------------------------------------------------------------------------
+Total Sum Insured / Coverage:   INR 11,300,000
+Applicable Premium Rate:        2.2% per annum
+Standard Compulsory Deductible: INR 15,000
+Total Annual Premium Payable:   INR 248,600
+
+4. CLAIMS & VERIFICATION ATTESTATION
+--------------------------------------------------------------------------------
+This insurance schedule represents the primary contractual basis between the named 
+policyholder and Falcon Mutual Insurance Ltd.. All claims submitted under Policy POL-2026-0177 
+must satisfy the covenants, warranties, and deductible thresholds described herein.
+
+Disclaimer: This document is artificially generated for academic/software testing 
+purposes and is not a real insurance policy.
+================================================================================

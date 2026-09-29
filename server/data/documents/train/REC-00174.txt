@@ -1,0 +1,36 @@
+================================================================================
+OFFICIAL SCHEDULE OF INSURANCE & POLICY CERTIFICATE
+ZENITH PREMIER INSURANCE CO.
+Underwriting & Risk Assurance Division | Certificate ID: POL-2026-0174
+================================================================================
+
+1. POLICY IDENTIFICATION & HOLDER DETAILS
+--------------------------------------------------------------------------------
+Policy Number:       POL-2026-0174
+Insurer Name:        Zenith Premier Insurance Co.
+Policyholder Name:   Neha Deshmukh
+Operating Location:  Mumbai, India
+Policy Type:         Commercial Property Insurance
+
+2. TERM & PERIOD OF COVERAGE
+--------------------------------------------------------------------------------
+Inception / Effective Date:  2026-03-23
+Policy Expiration Date:     2027-03-23
+Policy Duration:            Standard 12-Month Annual Term
+
+3. FINANCIAL UNDERWRITING & PREMIUM SCHEDULE
+--------------------------------------------------------------------------------
+Total Sum Insured / Coverage:   INR 3,000,000
+Applicable Premium Rate:        2.1% per annum
+Standard Compulsory Deductible: INR 25,000
+Total Annual Premium Payable:   INR 63,000
+
+4. CLAIMS & VERIFICATION ATTESTATION
+--------------------------------------------------------------------------------
+This insurance schedule represents the primary contractual basis between the named 
+policyholder and Zenith Premier Insurance Co.. All claims submitted under Policy POL-2026-0174 
+must satisfy the covenants, warranties, and deductible thresholds described herein.
+
+Disclaimer: This document is artificially generated for academic/software testing 
+purposes and is not a real insurance policy.
+================================================================================

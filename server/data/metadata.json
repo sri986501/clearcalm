@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-09-16T13:18:49.450308",
+  "random_seed": 42,
+  "splits": {
+    "train": {
+      "total": 520,
+      "consistent": 338,
+      "needs_review": 182,
+      "anomaly_types": {
+        "missing_mandatory_field": 19,
+        "insurer_mismatch": 18,
+        "multiple_anomalies": 26,
+        "incorrect_premium_rate": 28,
+        "policy_number_format_error": 20,
+        "invalid_expiry_date": 8,
+        "coverage_mismatch": 18,
+        "premium_mismatch": 24,
+        "inconsistent_policy_type": 10,
+        "invalid_deductible": 11
+      }
+    },
+    "validation": {
+      "total": 110,
+      "consistent": 72,
+      "needs_review": 38,
+      "anomaly_types": {
+        "coverage_mismatch": 8,
+        "incorrect_premium_rate": 3,
+        "invalid_deductible": 5,
+        "policy_number_format_error": 5,
+        "premium_mismatch": 7,
+        "insurer_mismatch": 3,
+        "inconsistent_policy_type": 1,
+        "missing_mandatory_field": 2,
+        "invalid_expiry_date": 3,
+        "multiple_anomalies": 1
+      }
+    },
+    "test": {
+      "total": 110,
+      "consistent": 72,
+      "needs_review": 38,
+      "anomaly_types": {
+        "invalid_expiry_date": 3,
+        "missing_mandatory_field": 8,
+        "insurer_mismatch": 5,
+        "incorrect_premium_rate": 2,
+        "inconsistent_policy_type": 5,
+        "premium_mismatch": 5,
+        "multiple_anomalies": 3,
+        "invalid_deductible": 5,
+        "policy_number_format_error": 1,
+        "coverage_mismatch": 1
+      }
+    }
+  },
+  "anomaly_categories": [
+    "invalid_expiry_date",
+    "premium_mismatch",
+    "coverage_mismatch",
+    "insurer_mismatch",
+    "policy_number_format_error",
+    "missing_mandatory_field",
+    "invalid_deductible",
+    "incorrect_premium_rate",
+    "inconsistent_policy_type",
+    "multiple_anomalies"
+  ],
+  "total_documents": 740
+}

@@ -1,0 +1,36 @@
+================================================================================
+OFFICIAL SCHEDULE OF INSURANCE & POLICY CERTIFICATE
+HERITAGE NATIONAL ASSURANCE
+Underwriting & Risk Assurance Division | Certificate ID: POL-2026-0478
+================================================================================
+
+1. POLICY IDENTIFICATION & HOLDER DETAILS
+--------------------------------------------------------------------------------
+Policy Number:       POL-2026-0478
+Insurer Name:        Heritage National Assurance
+Policyholder Name:   Siddharth Verma
+Operating Location:  Bengaluru, India
+Policy Type:         Commercial Property Insurance
+
+2. TERM & PERIOD OF COVERAGE
+--------------------------------------------------------------------------------
+Inception / Effective Date:  2026-02-06
+Policy Expiration Date:     2027-02-06
+Policy Duration:            Standard 12-Month Annual Term
+
+3. FINANCIAL UNDERWRITING & PREMIUM SCHEDULE
+--------------------------------------------------------------------------------
+Total Sum Insured / Coverage:   INR 7,000,000
+Applicable Premium Rate:        9.8% per annum
+Standard Compulsory Deductible: INR 5,000
+Total Annual Premium Payable:   INR 140,000
+
+4. CLAIMS & VERIFICATION ATTESTATION
+--------------------------------------------------------------------------------
+This insurance schedule represents the primary contractual basis between the named 
+policyholder and Heritage National Assurance. All claims submitted under Policy POL-2026-0478 
+must satisfy the covenants, warranties, and deductible thresholds described herein.
+
+Disclaimer: This document is artificially generated for academic/software testing 
+purposes and is not a real insurance policy.
+================================================================================

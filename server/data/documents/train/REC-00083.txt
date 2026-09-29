@@ -1,0 +1,36 @@
+================================================================================
+OFFICIAL SCHEDULE OF INSURANCE & POLICY CERTIFICATE
+BLUESHIELD COMMERCIAL UNDERWRITERS
+Underwriting & Risk Assurance Division | Certificate ID: POL-2026-0083
+================================================================================
+
+1. POLICY IDENTIFICATION & HOLDER DETAILS
+--------------------------------------------------------------------------------
+Policy Number:       POL-2026-0083
+Insurer Name:        BlueShield Commercial Underwriters
+Policyholder Name:   Rajesh Sharma
+Operating Location:  Chennai, India
+Policy Type:         Industrial All-Risk Policy
+
+2. TERM & PERIOD OF COVERAGE
+--------------------------------------------------------------------------------
+Inception / Effective Date:  2026-04-21
+Policy Expiration Date:     2027-04-21
+Policy Duration:            Standard 12-Month Annual Term
+
+3. FINANCIAL UNDERWRITING & PREMIUM SCHEDULE
+--------------------------------------------------------------------------------
+Total Sum Insured / Coverage:   INR 3,300,000
+Applicable Premium Rate:        2.1% per annum
+Standard Compulsory Deductible: INR 3,350,000
+Total Annual Premium Payable:   INR 69,300
+
+4. CLAIMS & VERIFICATION ATTESTATION
+--------------------------------------------------------------------------------
+This insurance schedule represents the primary contractual basis between the named 
+policyholder and BlueShield Commercial Underwriters. All claims submitted under Policy POL-2026-0083 
+must satisfy the covenants, warranties, and deductible thresholds described herein.
+
+Disclaimer: This document is artificially generated for academic/software testing 
+purposes and is not a real insurance policy.
+================================================================================

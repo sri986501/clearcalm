@@ -1,0 +1,36 @@
+================================================================================
+OFFICIAL SCHEDULE OF INSURANCE & POLICY CERTIFICATE
+STARGUARD INDEMNITY GROUP
+Underwriting & Risk Assurance Division | Certificate ID: INVALID#0224-XX
+================================================================================
+
+1. POLICY IDENTIFICATION & HOLDER DETAILS
+--------------------------------------------------------------------------------
+Policy Number:       INVALID#0224-XX
+Insurer Name:        StarGuard Indemnity Group
+Policyholder Name:   Amitabh Sengupta
+Operating Location:  Bengaluru, India
+Policy Type:         Commercial Property Insurance
+
+2. TERM & PERIOD OF COVERAGE
+--------------------------------------------------------------------------------
+Inception / Effective Date:  2026-03-26
+Policy Expiration Date:     2027-03-26
+Policy Duration:            Standard 12-Month Annual Term
+
+3. FINANCIAL UNDERWRITING & PREMIUM SCHEDULE
+--------------------------------------------------------------------------------
+Total Sum Insured / Coverage:   INR 5,100,000
+Applicable Premium Rate:        2.5% per annum
+Standard Compulsory Deductible: INR 5,000
+Total Annual Premium Payable:   INR 127,500
+
+4. CLAIMS & VERIFICATION ATTESTATION
+--------------------------------------------------------------------------------
+This insurance schedule represents the primary contractual basis between the named 
+policyholder and StarGuard Indemnity Group. All claims submitted under Policy INVALID#0224-XX 
+must satisfy the covenants, warranties, and deductible thresholds described herein.
+
+Disclaimer: This document is artificially generated for academic/software testing 
+purposes and is not a real insurance policy.
+================================================================================

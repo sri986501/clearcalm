@@ -1,0 +1,36 @@
+================================================================================
+OFFICIAL SCHEDULE OF INSURANCE & POLICY CERTIFICATE
+STARGUARD INDEMNITY GROUP
+Underwriting & Risk Assurance Division | Certificate ID: POL-2026-0072
+================================================================================
+
+1. POLICY IDENTIFICATION & HOLDER DETAILS
+--------------------------------------------------------------------------------
+Policy Number:       POL-2026-0072
+Insurer Name:        StarGuard Indemnity Group
+Policyholder Name:   Arjun Patel
+Operating Location:  New Delhi, India
+Policy Type:         Comprehensive Commercial Liability
+
+2. TERM & PERIOD OF COVERAGE
+--------------------------------------------------------------------------------
+Inception / Effective Date:  2026-04-01
+Policy Expiration Date:     2027-04-01
+Policy Duration:            Standard 12-Month Annual Term
+
+3. FINANCIAL UNDERWRITING & PREMIUM SCHEDULE
+--------------------------------------------------------------------------------
+Total Sum Insured / Coverage:   INR 5,400,000
+Applicable Premium Rate:        2.1% per annum
+Standard Compulsory Deductible: INR 50,000
+Total Annual Premium Payable:   INR 113,400
+
+4. CLAIMS & VERIFICATION ATTESTATION
+--------------------------------------------------------------------------------
+This insurance schedule represents the primary contractual basis between the named 
+policyholder and StarGuard Indemnity Group. All claims submitted under Policy POL-2026-0072 
+must satisfy the covenants, warranties, and deductible thresholds described herein.
+
+Disclaimer: This document is artificially generated for academic/software testing 
+purposes and is not a real insurance policy.
+================================================================================
